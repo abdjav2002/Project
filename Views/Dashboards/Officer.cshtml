@@ -1,0 +1,422 @@
+@{
+	ViewData["Title"] = "Logistics - Dashboard";
+}
+
+@section VendorStyles {
+	<link rel="stylesheet" href="~/vendor/libs/apex-charts/apex-charts.css" />
+	<link rel="stylesheet" href="~/vendor/libs/datatables-bs5/datatables.bootstrap5.css" />
+	<link rel="stylesheet" href="~/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css" />
+	<link rel="stylesheet" href="~/vendor/libs/flatpickr/flatpickr.css" />
+	<link rel="stylesheet" href="~/vendor/libs/select2/select2.css" />
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.0/css/buttons.dataTables.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/select/2.0.0/css/select.dataTables.css">
+	<link rel="stylesheet" href="~/vendor/libs/animate-css/animate.css">
+	<link rel="stylesheet" href="~/vendor/libs/apex-charts/apex-charts.css" />
+}
+
+@section VendorScripts {
+	<script src="~/vendor/libs/apex-charts/apexcharts.js"></script>
+	<script src="~/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
+	<script src="~/vendor/libs/apex-charts/apexcharts.js"></script>
+
+}
+
+@section PageStyles {
+	<link rel="stylesheet" href="~/vendor/css/pages/app-logistics-dashboard.css" />
+	@* <script src="~/js/charts-apex.js"></script> *@
+
+}
+
+@section PageScripts {
+	<script src="~/js/app-logistics-dashboard.js"></script>
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/dataTables.buttons.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.dataTables.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.html5.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.print.min.js"></script>
+	<script src="https://cdn.datatables.net/select/2.0.0/js/dataTables.select.js"></script>
+	<script src="https://cdn.datatables.net/select/2.0.0/js/select.dataTables.js"></script>
+	<script src="~/js/ui-modals.js"></script>
+
+	<script>
+		new DataTable('#example', {
+			layout: {
+				topStart: {
+					buttons: [
+						'copy',
+						'csv',
+						'excel',
+						'pdf',
+						{
+							extend: 'print',
+							text: 'Print all (not just selected)',
+							exportOptions: {
+								modifier: {
+									selected: null
+								}
+							}
+						}
+					]
+				}
+			},
+			select: true
+		});
+	</script>
+
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+	<script type="text/javascript">
+		// Load google charts
+		google.charts.load('current', { 'packages': ['corechart'] });
+		google.charts.setOnLoadCallback(drawChart);
+
+		// Draw the chart and set the chart values
+		function drawChart() {
+			var data = google.visualization.arrayToDataTable([
+				['Task', 'Hours per Day'],
+				['Work', 8],
+				['Eat', 2],
+				['TV', 4],
+				['Gym', 2],
+				['Sleep', 8]
+			]);
+
+			// Optional; add a title and set the width and height of the chart
+			var options = { 'title': 'My Average Day', 'width': 550, 'height': 400 };
+
+			// Display the chart inside the <div> element with id="piechart"
+			var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+			chart.draw(data, options);
+		}
+	</script>
+}
+
+@* ************** Content ************** *@
+<h4 class="py-3 mb-4">
+	<span class="text-muted fw-light">Logistics /</span> Dashboard
+</h4>
+
+<!-- Card Border Shadow -->
+<div class="row">
+		<div class="col-sm-6 col-lg-3 mb-4">
+	<a asp-action="OfficerLists">
+			<div class="card card-border-shadow-primary">
+				<div class="card-body">
+					<div class="d-flex align-items-center mb-2 pb-1">
+						<div class="avatar me-2">
+							<span class="avatar-initial rounded bg-label-primary"><i class="ti ti-truck ti-md"></i></span>
+						</div>
+						<h4 class="ms-1 mb-0">Total Lists: @ViewBag.lists</h4>
+					</div>
+					<p class="mb-1">On route vehicles</p>
+					<p class="mb-0">
+						<span class="fw-medium me-1">+18.2%</span>
+						<small class="text-muted">than last week</small>
+					</p>
+				</div>
+			</div>
+	</a>
+		</div>
+
+
+	
+
+	@* <div class="col-sm-6 col-lg-3 mb-4">
+		<div class="card card-border-shadow-warning">
+			<div class="card-body">
+				<div id="piechart"></div>
+			</div>
+		</div>
+	</div> *@
+
+	<div class="col-sm-6 col-lg-3 mb-4">
+		<div class="card card-border-shadow-warning">
+			<div class="card-body">
+				<div class="d-flex align-items-center mb-2 pb-1">
+					<div class="avatar me-2">
+						<span class="avatar-initial rounded bg-label-warning"><i class='ti ti-alert-triangle ti-md'></i></span>
+					</div>
+					<h4 class="ms-1 mb-0">Total Users: @ViewBag.users</h4>
+				</div>
+				<p class="mb-1">Vehicles with errors</p>
+				<p class="mb-0">
+					<span class="fw-medium me-1">-8.7%</span>
+					<small class="text-muted">than last week</small>
+				</p>
+			</div>
+		</div>
+	</div>
+	@* <div class="col-sm-6 col-lg-3 mb-4">
+		<div class="card card-border-shadow-danger">
+			<div class="card-body">
+				<div class="d-flex align-items-center mb-2 pb-1">
+					<div class="avatar me-2">
+						<span class="avatar-initial rounded bg-label-danger"><i class='ti ti-git-fork ti-md'></i></span>
+					</div>
+					<h4 class="ms-1 mb-0">Total Users Bound: @ViewBag.usersBound</h4>
+				</div>
+				<p class="mb-1">Deviated from route</p>
+				<p class="mb-0">
+					<span class="fw-medium me-1">+4.3%</span>
+					<small class="text-muted">than last week</small>
+				</p>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-6 col-lg-3 mb-4">
+		<div class="card card-border-shadow-info">
+			<div class="card-body">
+				<div class="d-flex align-items-center mb-2 pb-1">
+					<div class="avatar me-2">
+						<span class="avatar-initial rounded bg-label-info"><i class='ti ti-clock ti-md'></i></span>
+					</div>
+					<h4 class="ms-1 mb-0">Total Users InBound: @ViewBag.usersInBound</h4>
+				</div>
+				<p class="mb-1">Late vehicles</p>
+				<p class="mb-0">
+					<span class="fw-medium me-1">-2.5%</span>
+					<small class="text-muted">than last week</small>
+				</p>
+			</div>
+		</div>
+	</div> *@
+	<div class="col-sm-6 col-lg-3 mb-4" data-bs-toggle="modal" data-bs-target="#modalTop-organization" style="cursor:pointer;">
+		<div class="card card-border-shadow-info">
+			<div class="card-body">
+				<div class="d-flex align-items-center mb-2 pb-1">
+					<div class="avatar me-2">
+						<span class="avatar-initial rounded bg-label-info"><i class='ti ti-clock ti-md'></i></span>
+					</div>
+					<h4 class="ms-1 mb-0">Total Unique Organizations: @(ViewBag.uniqueListOfOrganizationname != null ? ViewBag.uniqueListOfOrganizationname.Count : 0)</h4>
+				</div>
+				<p class="mb-1">Late vehicles</p>
+				<p class="mb-0">
+					<span class="fw-medium me-1">-2.5%</span>
+					<small class="text-muted">than last week</small>
+				</p>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-6 col-lg-3 mb-4" data-bs-toggle="modal" data-bs-target="#modalTop-country" style="cursor:pointer;">
+		<div class="card card-border-shadow-info">
+			<div class="card-body">
+				<div class="d-flex align-items-center mb-2 pb-1">
+					<div class="avatar me-2">
+						<span class="avatar-initial rounded bg-label-info"><i class='ti ti-clock ti-md'></i></span>
+					</div>
+					<h4 class="ms-1 mb-0">Total Unique Countries: @(ViewBag.uniqueListOfCountryname != null ? ViewBag.uniqueListOfCountryname.Count : 0)</h4>
+				</div>
+				<p class="mb-1">Late vehicles</p>
+				<p class="mb-0">
+					<span class="fw-medium me-1">-2.5%</span>
+					<small class="text-muted">than last week</small>
+				</p>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-6 col-lg-3 mb-4" data-bs-toggle="modal" data-bs-target="#modalTop-region" style="cursor:pointer;">
+		<div class="card card-border-shadow-info">
+			<div class="card-body">
+				<div class="d-flex align-items-center mb-2 pb-1">
+					<div class="avatar me-2">
+						<span class="avatar-initial rounded bg-label-info"><i class='ti ti-clock ti-md'></i></span>
+					</div>
+					<h4 class="ms-1 mb-0">Total Unique Regions: @(ViewBag.uniqueListOfRegionname != null ? ViewBag.uniqueListOfRegionname.Count : 0)</h4>
+				</div>
+				<p class="mb-1">Late vehicles</p>
+				<p class="mb-0">
+					<span class="fw-medium me-1">-2.5%</span>
+					<small class="text-muted">than last week</small>
+				</p>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-6 col-lg-3 mb-4" data-bs-toggle="modal" data-bs-target="#modalTop-product" style="cursor:pointer;">
+		<div class="card card-border-shadow-info">
+			<div class="card-body">
+				<div class="d-flex align-items-center mb-2 pb-1">
+					<div class="avatar me-2">
+						<span class="avatar-initial rounded bg-label-info"><i class='ti ti-clock ti-md'></i></span>
+					</div>
+					<h4 class="ms-1 mb-0">Total Unique Products: @(ViewBag.uniqueListOfProductname != null ? ViewBag.uniqueListOfProductname.Count : 0)</h4>
+				</div>
+				<p class="mb-1">Late vehicles</p>
+				<p class="mb-0">
+					<span class="fw-medium me-1">-2.5%</span>
+					<small class="text-muted">than last week</small>
+				</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-sm-6 col-lg-3 mb-4" data-bs-toggle="modal" data-bs-target="#modalTop-center" style="cursor:pointer;">
+		<div class="card card-border-shadow-info">
+			<div class="card-body">
+				<div class="d-flex align-items-center mb-2 pb-1">
+					<div class="avatar me-2">
+						<span class="avatar-initial rounded bg-label-info"><i class='ti ti-clock ti-md'></i></span>
+					</div>
+					<h4 class="ms-1 mb-0">Total Unique Products: @(ViewBag.uniqueListOfCentername != null ? ViewBag.uniqueListOfCentername.Count : 0)</h4>
+				</div>
+				<p class="mb-1">Late vehicles</p>
+				<p class="mb-0">
+					<span class="fw-medium me-1">-2.5%</span>
+					<small class="text-muted">than last week</small>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+<!--/ Card Border Shadow -->
+<!-- Button trigger modal -->
+
+<!-- Modal -->
+<div class="modal modal-top fade" id="modalTop-organization" tabindex="-1">
+	<div class="modal-dialog">
+		<form class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalTopTitle">Organization</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" style="color: black;">
+				<ul>
+					@foreach (var organization in ViewBag.uniqueListOfOrganizationname ?? new List<string>())
+					{
+						<li>@organization</li>
+					}
+				</ul>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-label-primary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+				<!-- Modal -->
+<div class="modal modal-top fade" id="modalTop-country" tabindex="-1">
+	<div class="modal-dialog">
+		<form class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalTopTitle">Country</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" style="color: black;">
+				<ul>
+					@foreach (var country in ViewBag.uniqueListOfCountryname ?? new List<string>())
+					{
+						<li>@country</li>
+					}
+				</ul>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-label-primary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+				<!-- Modal -->
+<div class="modal modal-top fade" id="modalTop-region" tabindex="-1">
+	<div class="modal-dialog">
+		<form class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalTopTitle">Region</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" style="color: black;">
+				<ul>
+					@foreach (var region in ViewBag.uniqueListOfRegionname ?? new List<string>())
+					{
+						<li>@region</li>
+					}
+				</ul>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-label-primary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+				<!-- Modal -->
+<div class="modal modal-top fade" id="modalTop-segment" tabindex="-1">
+	<div class="modal-dialog">
+		<form class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalTopTitle">Unique Segments</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" style="color: black;">
+				<ul>
+					@foreach (var segment in ViewBag.uniqueListOfSegmentname ?? new List<string>())
+					{
+						<li>@segment</li>
+					}
+				</ul>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-label-primary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+<!-- Modal -->
+<div class="modal modal-top fade" id="modalTop-product" tabindex="-1">
+	<div class="modal-dialog">
+		<form class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalTopTitle">unique Products</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" style="color: black;">
+				<ul>
+					@foreach (var product in ViewBag.uniqueListOfProductname ?? new List<string>())
+					{
+						<li>@product</li>
+					}
+				</ul>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-label-primary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+<!-- Modal -->
+<div class="modal modal-top fade" id="modalTop-center" tabindex="-1">
+	<div class="modal-dialog">
+		<form class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalTopTitle">unique Centers</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" style="color: black;">
+				<ul>
+					@foreach (var center in ViewBag.uniqueListOfCentername ?? new List<string>())
+					{
+						<li>@center</li>
+					}
+				</ul>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-label-primary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+

@@ -1,0 +1,69 @@
+@model AspnetCoreMvcFull.Models.Statuscode
+
+@{
+	ViewData["Title"] = "Horizontal Form - Form Layouts";
+}
+@section VendorStyles {
+
+	<link rel="stylesheet" href="~/vendor/libs/flatpickr/flatpickr.css" />
+	<link rel="stylesheet" href="~/vendor/libs/select2/select2.css" />
+}
+@section VendorScripts {
+	<script src="~/vendor/libs/cleavejs/cleave.js"></script>
+	<script src="~/vendor/libs/cleavejs/cleave-phone.js"></script>
+	<script src="~/vendor/libs/moment/moment.js"></script>
+	<script src="~/vendor/libs/flatpickr/flatpickr.js"></script>
+	<script src="~/vendor/libs/select2/select2.js"></script>
+}
+@section PageScripts {
+	<script src="~/js/form-layouts.js"></script>
+}
+
+@* ************** Content ************** *@
+<h4 class="py-3 mb-4"><span class="text-muted fw-light">Add/</span>Status</h4>
+
+<!-- Basic Layout & Basic with Icons -->
+<div class="row">
+	<!-- Basic Layout -->
+	<div class="col-xxl">
+		<div class="card mb-4">
+			<div class="card-header d-flex align-items-center justify-content-between">
+				<h5 class="mb-0">Create Status</h5>
+			</div>
+			<div class="card-body">
+				<form asp-action="StatusCodeCreate" method="post">
+					<div asp-validation-summary="All" class="text-danger"></div>
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="StatusCode">Status Code</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" required id="StatusCode" asp-for="Statuscode1" placeholder="Enter Status Code" />
+						</div>
+					</div>
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="StatusName">Status Name</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" required id="StatusName" asp-for="Sname" placeholder="Enter Full Form" />
+						</div>
+					</div>
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="StatusDesc">Status Description</label>
+						<div class="col-sm-10">
+							<textarea id="StatusDesc" class="form-control" asp-for="Sdescription" placeholder="Enter Description"></textarea>
+						</div>
+					</div>
+					Date: Yes<input type="radio" asp-for="FollowupDate" value="1" checked /> &ensp;&ensp; No<input type="radio" asp-for="FollowupDate" value="0" /> <br />
+					Amount: Yes<input type="radio" asp-for="Amount" value="1" checked /> &ensp;&ensp; No<input type="radio" asp-for="Amount" value="0" />
+
+					<br />
+
+					<input type="color" id="favcolor" asp-for="Color" value="#ff0000">
+					<div class="row justify-content-end">
+						<div class="col-sm-10">
+							<button type="submit" class="btn btn-primary">Create Status</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

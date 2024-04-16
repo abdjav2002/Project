@@ -1,0 +1,406 @@
+@model List<Account>
+
+@{
+	ViewData["Title"] = "Accounts Detail";
+}
+
+
+<div class="modal-body" style="color: black;">@{var count = 0;}
+																@foreach (var acc in Model)
+																{
+																	
+																			<div class="row">
+																				@* <div class="col-md-6">
+																					<div class="form-group">
+																						<label>Status:</label>
+																						<span>@statusName</span>
+																					</div>
+																				</div> *@
+																				@* <div class="col-md-6">
+																					<div class="form-group">
+																						<label>Update Status</label>
+																						<a asp-controller="Dashboards" asp-action="updateStatus" asp-route-id="@acc.UserIdFk" asp-route-status="@s">
+																							Update
+																						</a>
+																					</div>
+																				</div> *@
+																				<div class="col-md-6">
+																				</div>
+			@if (count == 0)
+			{
+				count++;	
+				<div class="col-md-6">
+																					<div class="form-group">
+																						<a asp-controller="Dashboards" asp-action="updateRemarks" asp-route-id="@acc.Accountid">
+																							Update Remarks
+																						</a>
+																					</div>
+																				</div>
+			}
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Contract ID:</label>
+																						<span>@acc.Accountid</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>User ID:</label>
+																						<span>@acc.UserIdFk</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Product:</label>
+																						<span>@acc.Product</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Customer Account Number:</label>
+																						<span>@acc.Customeracnumber</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>CM Mobile:</label>
+																						<span>@acc.CmMobile</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>CM Home:</label>
+																						<span>@acc.CmHome</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>CM Work:</label>
+																						<span>@acc.CmWork</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>CM Reference 1:</label>
+																						<span>@acc.CmRef1</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>CM Reference 2:</label>
+																						<span>@acc.CmRef2</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>CM Home Address:</label>
+																						<span>@acc.CmHomeaddress</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>CM Work Address:</label>
+																						<span>@acc.CmWorkaddress</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Outstanding Balance:</label>
+																						<span>@acc.Outstandingbalance</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Contract Amount:</label>
+																						<span>@acc.Contractamount</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Overdue Amount:</label>
+																						<span>@acc.Overdueamount</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Minimum Payment:</label>
+																						<span>@acc.Minimumpayment</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Opening Balance:</label>
+																						<span>@acc.Openingbalance</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Principle Amount:</label>
+																						<span>@acc.Principleamount</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Legal Status:</label>
+																						<span>@acc.Legalstatus</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Cycle Date:</label>
+																						<span>@acc.Cycledate</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Bucket:</label>
+																						<span>@acc.Bucket</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Bkt1:</label>
+																						<span>@acc.Bkt1</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Bkt2:</label>
+																						<span>@acc.Bkt2</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Bkt3:</label>
+																						<span>@acc.Bkt3</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Bkt4:</label>
+																						<span>@acc.Bkt4</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Bkt5:</label>
+																						<span>@acc.Bkt5</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Bkt6:</label>
+																						<span>@acc.Bkt6</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Chargeoff Amount:</label>
+																						<span>@acc.Chargeoffamount</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Chargeoff Date:</label>
+																						<span>@acc.Chargeoffdate</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Writtenoff Amount:</label>
+																						<span>@acc.Writtenoffamount</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Writtenoff Date:</label>
+																						<span>@acc.Writtenoffdate</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Last Payment:</label>
+																						<span>@acc.Lastpayment</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Last Payment Date:</label>
+																						<span>@acc.Lastpaymentdate</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>DPD:</label>
+																						<span>@acc.Dpd</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>DPD 0-6:</label>
+																						<span>@acc.Dpd06</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>DPD 6-12:</label>
+																						<span>@acc.Dpd712</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>DPD 12-24:</label>
+																						<span>@acc.Dpd1318</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>DPD 24+:</label>
+																						<span>@acc.Dpd37plus</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>PO Box No:</label>
+																						<span>@acc.Poboxno</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Special Info:</label>
+																						<span>@acc.Specialinfo</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Status:</label>
+																						<span>@acc.Status</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-12">
+																					<div class="form-group">
+																						<label>Remarks:</label>
+																						<span>@acc.Remarks</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Updated At:</label>
+																						<span>@acc.UpdatedAt</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Created At:</label>
+																						<span>@acc.CreatedAt</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Organization ID:</label>
+																						<span>@acc.OrganizationIdFk</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Country ID:</label>
+																						<span>@acc.CountryIdFk</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Region ID:</label>
+																						<span>@acc.RegionIdFk</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Segment ID:</label>
+																						<span>@acc.SegmentIdFk</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Email ID:</label>
+																						<span>@acc.EmailIdFk</span>
+																					</div>
+																				</div>
+																			</div>
+																			<hr />
+																		}
+																		</div>

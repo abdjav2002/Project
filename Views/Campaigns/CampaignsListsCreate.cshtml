@@ -1,0 +1,91 @@
+@model AspnetCoreMvcFull.Models.Campaignslist
+
+@{
+	ViewData["Title"] = "Horizontal Form - Form Layouts";
+}
+@section VendorStyles {
+
+	<link rel="stylesheet" href="~/vendor/libs/flatpickr/flatpickr.css" />
+	<link rel="stylesheet" href="~/vendor/libs/select2/select2.css" />
+}
+@section VendorScripts {
+	<script src="~/vendor/libs/cleavejs/cleave.js"></script>
+	<script src="~/vendor/libs/cleavejs/cleave-phone.js"></script>
+	<script src="~/vendor/libs/moment/moment.js"></script>
+	<script src="~/vendor/libs/flatpickr/flatpickr.js"></script>
+	<script src="~/vendor/libs/select2/select2.js"></script>
+}
+@section PageScripts {
+	<script src="~/js/form-layouts.js"></script>
+}
+
+@* ************** Content ************** *@
+<h4 class="py-3 mb-4"><span class="text-muted fw-light">Add/</span>Campaigns List</h4>
+
+<!-- Basic Layout & Basic with Icons -->
+<div class="row">
+	<!-- Basic Layout -->
+	<div class="col-xxl">
+		<div class="card mb-4">
+			<div class="card-header d-flex align-items-center justify-content-between">
+				<h5 class="mb-0">Create A List For Campaign</h5>
+			</div>
+			<div class="card-body">
+				<form asp-action="CampaignsListsCreate" method="post">
+					<div asp-validation-summary="All" class="text-danger"></div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="CampaignslistsName">List Name/Description</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" required id="CampaignslistsName" asp-for="CampaignslistsName" placeholder="Enter List Name/Description" />
+						</div>
+					</div>
+					<div class="row mb-3">
+						<label class="col-sm-3 col-form-label" for="multicol-country">Assign To</label>
+						<div class="col-sm-9">
+							<!-- Populate the dropdown options from ViewBag.Campaigns -->
+							@if (ViewBag.fieldOfficer != null)
+							{
+								<select id="multicol-country" class="select2 form-select" data-allow-clear="true" asp-for="UserIdFk" required>
+									@foreach (var x in ViewBag.fieldOfficer)
+									{
+										<option value="@x.UserId">@x.UserName (@x.UserId)</option>
+									}
+								</select>
+							}
+							else
+							{
+								<span>No Field Officer available</span>
+							}
+						</div>
+					</div>
+					<input value="@ViewBag.id" asp-for="CampaignIdFk" type="hidden"/>
+					@* <div class="row mb-3">
+						<label class="col-sm-3 col-form-label" for="multicol-country">Campaign</label>
+						<div class="col-sm-9">
+								@if (ViewBag.Campaigns != null)
+								{
+								<select id="multicol-country" class="select2 form-select" data-allow-clear="true" asp-for="CampaignIdFk" required>
+									@foreach (var x in ViewBag.Campaigns)
+									{
+										<option value="@x.CampaignId">@x.CampaignName</option>
+									}
+							</select>
+								}
+								else
+								{
+									<span>No campaigns available</span>
+								}
+						</div>
+					</div> *@
+
+					<div class="row justify-content-end">
+						<div class="col-sm-10">
+							<button type="submit" class="btn btn-primary">Add list</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

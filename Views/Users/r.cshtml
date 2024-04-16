@@ -1,0 +1,39 @@
+@model List<User>
+
+<table class="datatables-users table">
+	<thead class="border-top">
+		<tr>
+			<th>ID</th>
+			<th>Username</th>
+			<th>Role</th>
+			<th>Dob</th>
+			<th>Cnic</th>
+			<th>CnicExDt</th>
+			<th>Passport</th>
+			<th>PassportExDt</th>
+			<th>Password</th>
+			<th>Status</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var user in Model)
+		{
+			var status = user.Status == 1 ? "Active" : "In-Active";
+			<tr>
+				<td>@user.UserId</td>
+				<td>@user.UserName</td>
+				<td>@user.RoleIdFkNavigation.RoleName</td>
+				<td>@user.Dob</td>
+				<td>@user.Gender</td>
+				<td>@user.Cnic</td>
+				<td>@user.Cnicexpiry</td>
+				<td>@user.Passport</td>
+				<td>@user.Passportexpiry</td>
+				<td>@user.Password</td>
+				<td>@status</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+

@@ -1,0 +1,456 @@
+@model AspnetCoreMvcFull.Models.User
+@{
+  ViewData["Title"] = "User List";
+}
+
+@section VendorStyles {
+@* <link rel="stylesheet" href="~/vendor/libs/datatables-bs5/datatables.bootstrap5.css">
+<link rel="stylesheet" href="~/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css">
+<link rel="stylesheet" href="~/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css"> *@
+<link rel="stylesheet" href="~/vendor/libs/select2/select2.css" />
+<link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/umd/styles/index.min.css" />
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.0/css/buttons.dataTables.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/select/2.0.0/css/select.dataTables.css">
+	<link rel="stylesheet" href="~/vendor/libs/animate-css/animate.css">
+}
+
+@section VendorScripts {
+<script src="~/vendor/libs/moment/moment.js"></script>
+<script src="~/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
+<script src="~/vendor/libs/select2/select2.js"></script>
+<script src="~/vendor/libs/&#64;form-validation/umd/bundle/popular.min.js"></script>
+<script src="~/vendor/libs/&#64;form-validation/umd/plugin-bootstrap5/index.min.js"></script>
+<script src="~/vendor/libs/&#64;form-validation/umd/plugin-auto-focus/index.min.js"></script>
+<script src="~/vendor/libs/cleavejs/cleave.js"></script>
+<script src="~/vendor/libs/cleavejs/cleave-phone.js"></script>
+}
+
+@section PageScripts {
+	
+@* <script src="~/js/app-user-list.js"></script> *@
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/dataTables.buttons.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.dataTables.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.html5.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.print.min.js"></script>
+	<script src="https://cdn.datatables.net/select/2.0.0/js/dataTables.select.js"></script>
+	<script src="https://cdn.datatables.net/select/2.0.0/js/select.dataTables.js"></script>
+	<script src="~/js/ui-modals.js"></script>
+
+	<script>
+		new DataTable('#example', {
+			layout: {
+				topStart: {
+					buttons: [
+						'copy',
+						'csv',
+						'excel',
+					]
+				}
+			},
+			select: true
+		});
+	</script>
+
+	
+}
+
+@* ************** Content ************** *@
+<div class="row g-4 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex align-items-start justify-content-between">
+          <div class="content-left">
+            <span>Total Users</span>
+            <div class="d-flex align-items-center my-2">
+							<h3 class="mb-0 me-2">@(ViewBag.TotalUsers)</h3>
+              @* <p class="text-success mb-0">(+29%)</p> *@
+            </div>
+          </div>
+          <div class="avatar">
+            <span class="avatar-initial rounded bg-label-primary">
+              <i class="ti ti-user ti-sm"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex align-items-start justify-content-between">
+          <div class="content-left">
+            <span>Active Users</span>
+            <div class="d-flex align-items-center my-2">
+							<h3 class="mb-0 me-2">@(ViewBag.ActiveUsers)</h3>
+							<p class="text-success mb-0">
+								@if (ViewBag.ActiveUsers != null && ViewBag.TotalUsers != null && ViewBag.TotalUsers > 0)
+								{
+									int activeUsers = (int)ViewBag.ActiveUsers;
+									int totalUsers = (int)ViewBag.TotalUsers;
+									int percentage = (int)Math.Round((double)activeUsers / totalUsers * 100);
+									@Html.Raw("+" + percentage + "%")
+								}
+							</p>
+
+							@* <p class="text-success mb-0">(+@(ViewBag.ActiveUsers/ViewBag.TotalUsers*100)%)</p> *@
+            </div>
+          </div>
+          <div class="avatar">
+						<span class="avatar-initial rounded bg-label-success">
+              <i class="ti ti-user-plus ti-sm"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex align-items-start justify-content-between">
+          <div class="content-left">
+            <span>Non-Active Users</span>
+            <div class="d-flex align-items-center my-2">
+							<h3 class="mb-0 me-2">@(ViewBag.NotActiveUsers)</h3>
+              @* <p class="text-danger mb-0">(-14%)</p> *@
+							<p class="text-danger mb-0">
+								@if (ViewBag.NotActiveUsers != null && ViewBag.TotalUsers != null && ViewBag.TotalUsers > 0)
+								{
+									int nonActiveUsers = (int)ViewBag.NotActiveUsers;
+									int totalUsers = (int)ViewBag.TotalUsers;
+									int percentage = (int)Math.Round((double)nonActiveUsers / totalUsers * 100);
+									@Html.Raw("-" + percentage + "%")
+								}
+							</p>
+            </div>
+          </div>
+          <div class="avatar">
+            <span class="avatar-initial rounded bg-label-danger">
+              <i class="ti ti-user-check ti-sm"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Users List Table -->
+<div class="card">
+	<div class="row">
+		<div class="col-9">
+		</div>
+		<div class="col-3">
+			<button class="dt-button add-new btn btn-primary waves-effect waves-light" tabindex="0" aria-controls="DataTables_Table_0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><span><i class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span class="d-none d-sm-inline-block">Add New User</span></span></button>
+		</div>
+	</div>
+	@if (ViewBag.UserDetail != null)
+	{
+		<table id="example" class="display nowrap" style="width:100%">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Username</th>
+					<th>Role</th>
+					<th>Dob</th>
+					<th>Gender</th>
+					<th>Status</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var user in (ViewBag.UserDetail as List<User>))
+				{
+					var status = user.Status == 1 ? "Active" : "In-Active";
+					<tr>
+						<td>@user.UserId</td>
+						<td>@user.UserName</td>
+						<td>@user.RoleIdFkNavigation.RoleName</td>
+						<td>@user.Dob</td>
+						<td>@user.Gender</td>
+						<td>@status</td>
+						<td>
+							@* <a asp-action="changeStatusUser" asp-route-id="@user.UserId"><button>Chnage</button></a> *@
+							<!-- Button trigger modal -->
+							<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTop-@user.UserId">
+								See More
+							</button>
+						</td>
+					</tr>
+
+					<!-- Modal -->
+					<div class="modal fade" id="modalTop-@user.UserId" tabindex="-1" aria-hidden="true">
+						<div class="modal-dialog modal-fullscreen" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="modalTopTitle">Detail Of User @user.UserName (@user.UserId)</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
+								<div class="modal-body" style="color: black;">
+
+
+
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label>User ID:</label>
+												<span>@user.UserId</span>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label>Name:</label>
+												<span>@user.Uname</span>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label>User Name:</label>
+												<span>@user.UserName</span>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label>Role:</label>
+												<span>@user.RoleIdFkNavigation.RoleName</span>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label>Dob:</label>
+												<span>@user.Dob</span>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label>Gender:</label>
+												<span>@user.Gender</span>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label>Cnic:</label>
+												<span>@user.Cnic</span>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label>Cnicexpiry:</label>
+												<span>@user.Cnicexpiry</span>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label>Passport:</label>
+												<span>@user.Passport</span>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label>Passport Expiry:</label>
+												<span>@user.Passportexpiry</span>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label>Created By:</label>
+												<span>@user.CreatedbyIdFkNavigation.UserName (@user.CreatedbyIdFkNavigation.UserId)</span>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label>Created To:</label>
+												<span>@user.CreatedtoIdFkNavigation.UserName (@user.CreatedtoIdFkNavigation.UserId)</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				}
+			</tbody>
+		<tfoot>
+			<tr>
+				<th>ID</th>
+				<th>Username</th>
+				<th>Role</th>
+				<th>Dob</th>
+				<th>Gender</th>
+				<th>Status</th>
+				<th></th>
+			</tr>
+		</tfoot>
+	</table>
+	}
+  <!-- Offcanvas to add new user -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddUser" aria-labelledby="offcanvasAddUserLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasAddUserLabel" class="offcanvas-title">Add User</h5>
+      <button style="margin:10px" type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+		<div class="offcanvas-body mx-0 flex-grow-0 pt-0 h-100">
+			<div asp-validation-summary="All" class="text-danger"></div>
+			<form class="add-new-user pt-0" asp-controller="Users" asp-action="Create" method="post">
+				<div class="mb-3">
+					<label class="form-label" for="add-user-name">Name</label>
+					<input type="text" class="form-control" id="add-user-name" placeholder="Enter name" aria-label="Username" asp-for="Uname" />
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="add-user-username">Username</label>
+					<input type="text" class="form-control" id="add-user-username" placeholder="Enter username" aria-label="Username" asp-for="UserName" />
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="add-user-dob">Date of Birth</label>
+					<input type="date" class="form-control" id="add-user-dob" placeholder="Enter date of birth" aria-label="Date of Birth" asp-for="Dob" />
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="user-role">Gender</label>
+					<select id="gender" class="form-select" aria-label="User Role" asp-for="Gender">
+						<option value="Male">Male</option>
+						<option value="Female">Female</option>
+					</select>
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="add-user-passport">Passport</label>
+					<input type="text" class="form-control" id="add-user-passport" placeholder="Enter passport" aria-label="Passport" asp-for="Passport" />
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="add-user-cnic">CNIC</label>
+					<input type="text" class="form-control" id="add-user-cnic" placeholder="Enter CNIC" aria-label="CNIC" asp-for="Cnic" />
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="add-user-cnicexpiry">CNIC Expiry</label>
+					<input type="date" class="form-control" id="add-user-cnicexpiry" placeholder="Enter CNIC expiry" aria-label="CNIC Expiry" asp-for="Cnicexpiry" />
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="add-user-passportexpiry">Passport Expiry</label>
+					<input type="date" class="form-control" id="add-user-passportexpiry" placeholder="Enter passport expiry" aria-label="Passport Expiry" asp-for="Passportexpiry" />
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="add-user-password">Password</label>
+					<input type="password" class="form-control" id="add-user-password" placeholder="Enter password" aria-label="Password" asp-for="Password" />
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="user-role">User Role</label>
+					<select id="user-role" class="form-select" required aria-label="User Role" asp-for="RoleIdFk" onchange="ShowOrHide(this.value)">
+						<option value="0">-- Select Role --</option>
+						@if (ViewBag.listRoles != null && ViewBag.listRoles.Count > 0)
+						{
+							foreach (var role in ViewBag.listRoles)
+							{
+								<option value="@role.RoleId">@role.RoleName</option>
+							}
+						}
+					</select>
+					<script>
+						
+
+						function ShowOrHide(roleId) {
+							var displayToSelectionDiv = document.getElementById("display-to-selection");
+							var createdToSelectionDiv = document.getElementById("created-to-selection");
+							console.log(roleId);
+							if (roleId > 4) {
+								createdToSelectionDiv.style.display = "block";
+							} else {
+								createdToSelectionDiv.style.display = "none";
+								displayToSelectionDiv.style.display = "none";
+							}
+						}
+					</script>
+				</div>
+
+				<div class="mb-3" id="created-to-selection" style="display:none;">
+					<label class="form-label" for="user-role">Select Role To Assign</label>
+					<select class="form-select" aria-label="User Role" onchange="fetchUsersByRole(this.value)">
+						<option value="3">Manager</option>
+						<option value="4">Supervisor</option>
+					</select>
+
+					
+
+				</div>
+
+				<div class="mb-3" id="display-to-selection" style="display:none;">
+					<label class="form-label" for="user-role">Users</label>
+					<select id="created-to" class="form-select" aria-label="User Role" asp-for="CreatedtoIdFk">
+					</select>
+				</div>
+				<button type="submit" class="btn btn-primary me-sm-3 me-1 data-submit">Submit</button>
+				<button type="reset" class="btn btn-label-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+
+				<script>
+					function fetchUsersByRole(roleId) {
+						var displayToSelectionDiv = document.getElementById("display-to-selection");
+						const select = document.getElementById('created-to');
+
+						displayToSelectionDiv.style.display = "block";
+						fetch(`/Users/UsersByRole?id=${roleId}`)
+							.then(response => response.json())
+							.then(users => {
+								displayUsers(users);
+							})
+							.catch(error => { // Added parentheses around error parameter
+								console.error('Error fetching users:', error);
+								displayToSelectionDiv.style.display = "none";
+								select.innerHTML = ""; // Corrected innerHTML
+							});
+					}
+
+					document.addEventListener("DOMContentLoaded", function () {
+						// Make initial AJAX request to fetch users by role
+						fetchUsersByRole(3); // Pass the role ID you want to fetch users for initially
+						var createdToSelectionDiv = document.getElementById("created-to-selection");
+						createdToSelectionDiv.style.display = "none";
+						var x = document.getElementById("display-to-selection");
+						x.style.display = "none";
+					});
+
+					function displayUsers(users) {
+						const select = document.getElementById('created-to');
+						select.innerHTML = ''; // Clear existing options
+
+						users.forEach(user => {
+							const option = document.createElement('option');
+							option.value = user.userId;
+							option.textContent = user.userName;
+							select.appendChild(option);
+							console.log(option);
+							console.log(user);
+							console.log(user.userId);
+							console.log(user.userName);
+						});
+					}
+				</script>
+
+			</form>
+		</div>
+
+	</div>
+</div>

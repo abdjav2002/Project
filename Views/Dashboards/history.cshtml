@@ -1,0 +1,1083 @@
+@model List<Account>
+
+@{
+	ViewData["Title"] = "Excel";
+}
+
+@section VendorStyles {
+
+	<link rel="stylesheet" href="~/vendor/libs/flatpickr/flatpickr.css" />
+	<link rel="stylesheet" href="~/vendor/libs/select2/select2.css" />
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.0/css/buttons.dataTables.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/select/2.0.0/css/select.dataTables.css">
+	<link rel="stylesheet" href="~/vendor/libs/animate-css/animate.css">
+	<link rel="stylesheet" href="~/vendor/libs/dropzone/dropzone.css" />
+
+}
+@section VendorScripts {
+	<script src="~/vendor/libs/cleavejs/cleave.js"></script>
+	<script src="~/vendor/libs/cleavejs/cleave-phone.js"></script>
+	<script src="~/vendor/libs/moment/moment.js"></script>
+	<script src="~/vendor/libs/flatpickr/flatpickr.js"></script>
+	<script src="~/vendor/libs/select2/select2.js"></script>
+	<script src="~/vendor/libs/dropzone/dropzone.js"></script>
+
+}
+@section PageScripts {
+	@* <script src="~/js/form-layouts.js"></script> *@
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/dataTables.buttons.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.dataTables.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.html5.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.print.min.js"></script>
+	<script src="https://cdn.datatables.net/select/2.0.0/js/dataTables.select.js"></script>
+	<script src="https://cdn.datatables.net/select/2.0.0/js/select.dataTables.js"></script>
+	<script src="~/js/ui-modals.js"></script>
+
+	<script>
+		new DataTable('#example', {
+			layout: {
+				topStart: {
+					buttons: [
+						'copy',
+						'csv',
+						'excel',
+						'pdf'
+					]
+				}
+			},
+			select: true
+		});
+	</script>
+}
+
+@{
+	var countrys = ViewBag.country as List<Country>;
+	var segments = ViewBag.segment as List<Segment>;
+	var regions = ViewBag.region as List<Region>;
+	var organizations = ViewBag.organization as List<Organization>;
+	var centers = ViewBag.center as List<Center>;
+	var products = ViewBag.product as List<Product>;
+}
+
+
+<form asp-controller="Dashboards" asp-action="history" method="get">
+	<input type="hidden" value="@ViewBag.listId" name="id" />
+	<div class="row">
+		<div class="col-4">
+			<div class="card mb-4">
+				<div class="mb-3" style="padding:10px;">
+					<label class="form-label" for="user-role">Countries</label>
+					@if (countrys != null)
+					{
+						<select name="fcon" class="form-select">
+							<option value="All">All</option>
+							@foreach (var c in countrys)
+							{
+								string q = "unselect";
+								if (ViewBag.vcon != "" && ViewBag.vcon != "All")
+								{
+									if (c.Countryid == Convert.ToInt32(ViewBag.vcon))
+									{
+										q = "selected";
+									}
+								}
+								<option value="@c.Countryid" selected=@q>
+									@c.Countryname
+								</option>
+							}
+
+						</select>
+					}
+					else
+					{
+						<p>No countrys found.</p>
+					}
+				</div>
+			</div>
+		</div>
+
+		<div class="col-4">
+			<div class="card mb-4">
+				<div class="mb-3" style="padding:10px;">
+					<label class="form-label" for="user-role">Segments</label>
+					@if (segments != null)
+					{
+						<select name="fseg" class="form-select">
+							<option value="All">All</option>
+							@foreach (var s in segments)
+							{
+								string q = "";
+								if (ViewBag.vseg != "" && ViewBag.vseg != "All")
+								{
+									if (s.Segmentid == Convert.ToInt32(ViewBag.vseg))
+									{
+										q = "selected";
+									}
+								}
+								<option value="@s.Segmentid" selected="@q">@s.Segmentname</option>
+							}
+						</select>
+					}
+					else
+					{
+						<p>No segments found.</p>
+					}
+				</div>
+			</div>
+		</div>
+
+		<div class="col-4">
+			<div class="card mb-4">
+				<div class="mb-3" style="padding:10px;">
+					<label class="form-label" for="user-role">Region</label>
+					@if (regions != null)
+					{
+						<select name="freg" class="form-select">
+							<option value="All">All</option>
+							@foreach (var r in regions)
+							{
+								string q = "";
+								if (ViewBag.vreg != "" && ViewBag.vreg != "All")
+								{
+									if (r.Regionid == Convert.ToInt32(ViewBag.vreg))
+									{
+										q = "selected";
+									}
+								}
+								<option value="@r.Regionid" selected="@q">@r.Regionname</option>
+							}
+						</select>
+					}
+					else
+					{
+						<p>No regions found.</p>
+					}
+				</div>
+			</div>
+		</div>
+
+		<div class="col-4">
+			<div class="card mb-4">
+				<div class="mb-3" style="padding:10px;">
+					<label class="form-label" for="user-role">Organization</label>
+					@if (organizations != null)
+					{
+						<select name="forg" class="form-select">
+							<option value="All">All</option>
+							@foreach (var o in organizations)
+							{
+								string q = "";
+								if (ViewBag.vorg != "" && ViewBag.vorg != "All")
+								{
+									if (o.Organizationid == Convert.ToInt32(ViewBag.vorg))
+									{
+										q = "selected";
+									}
+								}
+								<option value="@o.Organizationid" selected="@q">@o.Organizationname</option>
+							}
+						</select>
+					}
+					else
+					{
+						<p>No organizations found.</p>
+					}
+				</div>
+			</div>
+		</div>
+
+		<div class="col-4">
+			<div class="card mb-4">
+				<div class="mb-3" style="padding:10px;">
+					<label class="form-label" for="user-role">Centers</label>
+					@if (centers != null)
+					{
+						<select name="fcen" class="form-select">
+							<option value="All">All</option>
+							@foreach (var c in centers)
+							{
+								string q = "";
+								if (ViewBag.vcen != "" && ViewBag.vcen != "All")
+								{
+									string cenn = ViewBag.vcen;
+									if (c.Cname == cenn.ToLower())
+									{
+										q = "selected";
+									}
+								}
+								<option value="@c.CenterId" selected="@q">@c.Cname</option>
+							}
+						</select>
+					}
+					else
+					{
+						<p>No centers found.</p>
+					}
+				</div>
+			</div>
+		</div>
+
+		<div class="col-4">
+			<div class="card mb-4">
+				<div class="mb-3" style="padding:10px;">
+					<label class="form-label" for="user-role">Products</label>
+					@if (products != null)
+					{
+						<select name="fpro" class="form-select">
+							<option value="All">All</option>
+							@foreach (var p in products)
+							{
+								string q = "";
+								if (ViewBag.vpro != "" && ViewBag.vpro != "All")
+								{
+									string proo = ViewBag.vpro;
+									if (p.Pname.ToLower() == proo.ToLower())
+									{
+										q = "selected";
+									}
+								}
+								<option value="@p.ProductId" selected="@q">@p.Pname</option>
+							}
+						</select>
+					}
+					else
+					{
+						<p>No products found.</p>
+					}
+				</div>
+			</div>
+		</div>
+
+		<div class="col-3"></div>
+		<div class="col-6">
+			<input type="submit" style="background-color:#1E7FC2;color:white" class="form-control" value="Filter" />
+		</div>
+
+	</div>
+</form>
+
+
+<table @* id="example" *@ class="display nowrap" style="width:100%;margin-top:30px;" border="1">
+	<thead>
+		<tr>
+			<th>UserID</th>
+			<th>Account.No</th>
+			<th>Cust.Name</th>
+			<th>Cnic</th>
+			<th>Passport</th\>
+			<th>Email</th>
+			<th>Overdue</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@if (Model != null && Model.Count > 0)
+		{
+			@foreach (var x in Model)
+			{
+				var statusName = "Bound";
+				var s = 1;
+				if (x.UserIdFkNavigation.Status == 1)
+				{
+					s = 0;
+					statusName = "Bound";
+				}
+				else
+				{
+					s = 1;
+					statusName = "Inbound";
+				}
+				var nation = "";
+
+				<tr id="@x.Accountid">
+					@* <td>@x.UserIdFkNavigation!.UserName (@x.UserIdFkNavigation!.UserId)</td> *@
+					<td>@x.CustomerIdFkNavigation!.UserId</td>
+					<td>@x.Accountid</td>
+					<td>@x.CustomerIdFkNavigation!.Uname</td>
+					<td>@x.CustomerIdFkNavigation!.Cnic</td>
+					<td>@x.CustomerIdFkNavigation!.Passport</td>
+					<td>@x.EmailIdFkNavigation!.Email1</td>
+					<td>@x.Overdueamount</td>
+					<td>
+						<!-- Button trigger modal -->
+						@* <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTop-@x.Accountid">
+							See More
+						</button> *@
+						<a asp-action="custDet" asp-route-id="@x.Accountid">
+							<button class="btn btn-warning">Cust.Det</button>
+						</a>
+						<a asp-action="accounts" asp-route-id="@x.Accountid">
+							<button class="btn btn-primary">Acc.Det</button>
+						</a>
+					</td>
+				</tr>
+
+
+				<!-- Modal -->
+				<div class="modal fade" id="modalTop-@x.Accountid" tabindex="-1" aria-hidden="true">
+					<div class="modal-dialog modal-fullscreen" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="modalFullTitle">>Detail Of User @x.UserIdFkNavigation.UserName (@x.UserIdFkNavigation.UserId)</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body" style="color: black;">
+
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<a asp-controller="Dashboards" asp-action="accounts" asp-route-id="@x.CustomerIdFk">
+												See History
+											</a>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<a asp-controller="Dashboards" asp-action="updateRemarks" asp-route-id="@x.Accountid">
+												Update Remarks
+											</a>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>A)AllocationDate:</label>
+											<span>@x.AllocationDate</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>B)User ID:</label>
+											<span>@x.UserIdFk</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												C)Organization:
+											</label>
+											<span>@x.OrganizationIdFkNavigation!.Organizationname</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												D)Country:
+											</label>
+											<span>@x.CountryIdFkNavigation!.Countryname</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>E)Region:</label>
+											<span>@x.RegionIdFkNavigation!.Regionname</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>F)Center:</label>
+											<span>@x.Center</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>G)Segment:</label>
+											<span>@x.SegmentIdFkNavigation!.Segmentname</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>H)Product:</label>
+											<span>@x.Product</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>I)Customer ID:</label>
+											<span>@x.CustomerIdFk</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												J)Customer A/C Number:
+											</label>
+											<span>@x.Customeracnumber</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												K)Contract Date:
+											</label>
+											<span>@x.ContractDate</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												L)Customer Name:
+											</label>
+											<span>@x.UserIdFkNavigation!.UserName</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>M)Gender:</label>
+											<span>@x.UserIdFkNavigation!.Gender</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												N)CM Mobile no:
+											</label>
+											<span>@x.CmMobile</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												O)CM Home no:
+											</label>
+											<span>@x.CmHome</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												P)CM Work no:
+											</label>
+											<span>@x.CmWork</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												Q)FAX no:
+											</label>
+											<span>@x.Faxno</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												R)CM Ref-1 #:
+											</label>
+											<span>@x.CmRef1</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												S)CM Ref-2 #:
+											</label>
+											<span>@x.CmRef2</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												T)Contact Person/Deptt:
+											</label>
+											<span>@x.ContactPersonOrDeptt</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												U)CM Home Address:
+											</label>
+											<span>@x.CmHomeaddress</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												V)CM Work Address:
+											</label>
+											<span>@x.CmWorkaddress</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												W)Outstanding Balance:
+											</label>
+											<span>@x.Outstandingbalance</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												X)Contract/Chq Amount
+												:
+											</label>
+											<span>@x.Contractamount</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												Y)Overdue Amount
+												:
+											</label>
+											<span>@x.Overdueamount</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												Z)Minimum Payment
+												:
+											</label>
+											<span>@x.Minimumpayment</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												AA)Opening Balance
+												:
+											</label>
+											<span>@x.Openingbalance</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												AB)Principle Amount
+												:
+											</label>
+											<span>@x.Principleamount</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												AC)Legal Status
+												:
+											</label>
+											<span>@x.Legalstatus</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												AD)Cycle
+												:
+											</label>
+											<span>@x.Cycledate</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>AE)Bkt-1:</label>
+											<span>@x.Bkt1</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>AF)Bkt-2:</label>
+											<span>@x.Bkt2</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>AG)Bkt-3:</label>
+											<span>@x.Bkt3</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>AH)Bkt-4:</label>
+											<span>@x.Bkt4</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>AI)Bkt-5:</label>
+											<span>@x.Bkt5</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>AJ)Bkt-6:</label>
+											<span>@x.Bkt6</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>AK)Chargeoff Amount:</label>
+											<span>@x.Chargeoffamount</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>AL)Chargeoff Date:</label>
+											<span>@x.Chargeoffdate</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>AM)Writtenoff Amount:</label>
+											<span>@x.Writtenoffamount</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>AN)Writtenoff Date:</label>
+											<span>@x.Writtenoffdate</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>AO)Last Payment:</label>
+											<span>@x.Lastpayment</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>AP)Last Payment Date:</label>
+											<span>@x.Lastpaymentdate</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												AQ)2nd Last Payment Amount
+												:
+											</label>
+											<span>@x.Secondlastpayment</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												AR)2nd Last Payment Date
+												:
+											</label>
+											<span>@x.Secondlastpaymentdate</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												AS)3rd Last Payment Amount
+												:
+											</label>
+											<span>@x.Thirdlastpayment</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												AT)3rd Last Payment Date
+												:
+											</label>
+											<span>@x.ThirdlastpaymentDate</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												AU)4th Last Payment Amount
+												:
+											</label>
+											<span>@x.Fourthlastpayment</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												AV)4th Last Payment Date
+												:
+											</label>
+											<span>@x.FourthlastpaymentDate</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												AW)5th Last Payment Amount
+												:
+											</label>
+											<span>@x.Fifthlastpayment</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												AX)5th Last Payment Date
+												:
+											</label>
+											<span>@x.FifthlastpaymentDate</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												AY)6th Last Payment Amount
+												:
+											</label>
+											<span>@x.Sixthlastpayment</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												AZ)6th Last Payment Date
+												:
+											</label>
+											<span>@x.SixthlastpaymentDate</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BA)Total Claimed Amount
+												:
+											</label>
+											<span>@x.TotalClaimedAmount</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BB)Total Paid Amount
+												:
+											</label>
+											<span>@x.TotalPaidAmount</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BC)Unpaid Invoice
+												:
+											</label>
+											<span>@x.UnpaidInvoice</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>BD)DPD:</label>
+											<span>@x.Dpd</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BE)0-6 DPD
+												:
+											</label>
+											<span>@x.Dpd06</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BF)7-12 DPD
+												:
+											</label>
+											<span>@x.Dpd712</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BG)13-18 DPD
+												:
+											</label>
+											<span>@x.Dpd1318</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BH)19-24 DPD
+												:
+											</label>
+											<span>@x.Dpd1924</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BI)25-36 DPD
+												:
+											</label>
+											<span>@x.Dpd2536</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BJ)37+ DPD
+												:
+											</label>
+											<span>@x.Dpd37plus</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BK)Nationality
+												:
+											</label>
+											@{
+
+												if (ViewBag.Nation != null && ViewBag.Nation.Count > 0)
+												{
+													@foreach (var y in ViewBag.Nation)
+													{
+														if (x.UserIdFk == y.UserIdFk)
+														{
+															<span>@y.Nationality1</span>
+															break;
+														}
+													}
+
+												}
+											}
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BL)EID/NIC Number
+												:
+											</label>
+											<span>@x.UserIdFkNavigation!.Cnic</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BM)EID/NIC Expiry
+												:
+											</label>
+											<span>@x.UserIdFkNavigation!.Cnicexpiry</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BN)DOB
+												:
+											</label>
+											<span>@x.UserIdFkNavigation!.Dob</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BO)Passport NO
+												:
+											</label>
+											<span>@x.UserIdFkNavigation!.Passport</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BP)Passport Expiry
+												:
+											</label>
+											<span>@x.UserIdFkNavigation!.Passportexpiry</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BQ)PO Box #
+												:
+											</label>
+											<span>@x.Poboxno</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BR)Email-id
+												:
+											</label>
+											<span>@x.EmailIdFk</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BS)Special Info
+												:
+											</label>
+											<span>@x.Specialinfo</span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BT)Status
+												:
+											</label>
+											<span>@x.Status</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>
+												BU)Remarks
+												:
+											</label>
+											<span>@x.Remarks</span>
+										</div>
+									</div>
+								</div>
+
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+					
+			}
+		}
+		else
+		{
+			<span>No users available</span>
+		}
+
+	</tbody>
+	<tfoot>
+		<tr>
+			<th>UserID</th>
+			<th>Account.No</th>
+			<th>Cust.Name</th>
+			<th>Cnic</th>
+			<th>Passport</th>
+			<th>Email</th>
+			<th>Overdue</th>
+			<th></th>
+		</tr>
+	</tfoot>
+</table>

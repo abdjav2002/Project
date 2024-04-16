@@ -1,0 +1,107 @@
+@model List<Actioncode>
+@{
+	ViewData["Title"] = "Action Code";
+}
+
+@section VendorStyles {
+	@* <link rel="stylesheet" href="~/vendor/libs/datatables-bs5/datatables.bootstrap5.css">
+<link rel="stylesheet" href="~/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css">
+<link rel="stylesheet" href="~/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css"> *@
+	<link rel="stylesheet" href="~/vendor/libs/select2/select2.css" />
+	<link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/umd/styles/index.min.css" />
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.0/css/buttons.dataTables.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/select/2.0.0/css/select.dataTables.css">
+	<link rel="stylesheet" href="~/vendor/libs/animate-css/animate.css">
+}
+
+@section VendorScripts {
+	<script src="~/vendor/libs/moment/moment.js"></script>
+	<script src="~/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
+	<script src="~/vendor/libs/select2/select2.js"></script>
+	<script src="~/vendor/libs/&#64;form-validation/umd/bundle/popular.min.js"></script>
+	<script src="~/vendor/libs/&#64;form-validation/umd/plugin-bootstrap5/index.min.js"></script>
+	<script src="~/vendor/libs/&#64;form-validation/umd/plugin-auto-focus/index.min.js"></script>
+	<script src="~/vendor/libs/cleavejs/cleave.js"></script>
+	<script src="~/vendor/libs/cleavejs/cleave-phone.js"></script>
+}
+
+@section PageScripts {
+	@* <script src="~/js/app-user-list.js"></script> *@
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/dataTables.buttons.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.dataTables.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.html5.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.print.min.js"></script>
+	<script src="https://cdn.datatables.net/select/2.0.0/js/dataTables.select.js"></script>
+	<script src="https://cdn.datatables.net/select/2.0.0/js/select.dataTables.js"></script>
+	<script src="~/js/ui-modals.js"></script>
+
+	<script>
+		new DataTable('#example', {
+			layout: {
+				topStart: {
+					buttons: [
+						'copy',
+						'csv',
+						'excel',
+						'pdf'
+					]
+				}
+			},
+			select: true
+		});
+	</script>
+}
+
+<div class="card">
+	<div class="col-3">
+		<a asp-action="ActionCodeCreate"><button class="dt-button add-new btn btn-primary waves-effect waves-light my-3">Add Action Code</button></a>
+	</div>
+	@if (Model != null && Model.Count > 0)
+		{
+	<table id="example" class="display nowrap" style="width:100%">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Code</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Color</th>
+				<th>Amount</th>
+				<th>Date</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var a in Model)
+			{
+				<tr>
+						<td>@a.ActionId</td>
+						<td>@a.Actioncode1</td>
+						<td>@a.Aname</td>
+						<td>@a.Adescription</td>
+						<td style="background-color:@a.Color">@a.Color</td>
+						<td>@(a.Amount ==1? "Yes" : "No")</td>
+						<td>@(a.FollowUpDate ==1? "Yes" : "No")</td>
+				</tr>
+			}
+		</tbody>
+		<tfoot>
+			<tr>
+				<th>ID</th>
+				<th>Code</th>
+				<th>Name</th>
+				<th>Description</th>
+					<th>Amount</th>
+					<th>Date</th>
+			</tr>
+		</tfoot>
+	</table>
+		}else{
+			<p>No Action Code Found.</p>
+		}
+</div>

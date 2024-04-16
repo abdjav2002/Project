@@ -1,0 +1,515 @@
+@model List<Campaign>
+
+@{
+	ViewData["Title"] = "Accordion - UI elements";
+}
+@* ************** Content ************** *@
+
+<h4 class="py-3 mb-4"><span class="text-muted fw-light">Campaigns /</span> Total-@Model.Count
+	<a asp-controller="Dashboards" asp-action="myExcel" style="float:right"><button class="dt-button add-new btn btn-primary waves-effect waves-light">Upload Excel</button></a>
+	</h4>
+<a asp-controller="Campaigns" asp-action="CampaignsCreate"><h6>Add Campaigns</h6></a>
+<!-- Advance Styling Options -->
+
+<div class="row mb-3">
+	@if (Model != null && Model.Count > 0)
+	{
+	@foreach (var x in Model)
+	{
+		
+	<!-- Accordion with Icon -->
+	<div class="col-md-6 mb-4 mb-md-2">
+				<h5>@x.CampaignName <a asp-controller="Campaigns" asp-action="CampaignsListsCreate" asp-route-id="@x.CampaignId"><p>Add List</p></a></h5>
+		<small class="text-light fw-medium">@x.CampaignDesc</small>
+			@if (ViewBag.list != null && ViewBag.list.Count > 0)
+			{
+				@foreach (var y in ViewBag.list)
+				{
+				if (y.CampaignIdFk == x.CampaignId)
+				{
+					var count = 0;
+							<div class="accordion mt-3" id="accordionWithIcon-@(x.CampaignId)" style="background-color:antiquewhite;">
+						<div class="card accordion-item">
+							<h2 class="accordion-header d-flex align-items-center">
+										<button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionWithIcon-@(x.CampaignId)-@(y.CampaignslistsId)" aria-expanded="false">
+									<i class="ti ti-star ti-xs me-2"></i>
+											@y.CampaignslistsName (Officer: @y.UserIdFkNavigation.UserName (@y.UserIdFkNavigation.UserId)  Target: @y.Target)
+								</button>
+							</h2>
+
+							<div id="accordionWithIcon-@(x.CampaignId)-@(y.CampaignslistsId)" class="accordion-collapse collapse">
+								<div class="accordion-body">
+											<div style="display:flex;justify-content:space-between">
+												<a asp-controller="Campaigns" asp-action="CampaignsListUsersCreate" asp-route-id="@y.CampaignslistsId"><p>Add User</p></a>
+												<a asp-controller="Campaigns" asp-action="AssignedEdit" asp-route-id="@y.CampaignslistsId"><p>Remove/DNC</p></a>
+												<a asp-controller="Dashboards" asp-action="Target" asp-route-id="@y.CampaignslistsId"><p>Set Target</p></a>
+											</div>
+									@foreach (var z in ViewBag.listUsers)
+									{
+						if (y.CampaignslistsId == z.CampaignslistsIdFk)
+										{
+											count++;
+													<div style="display: flex;justify-content: space-between;cursor:pointer;" data-bs-toggle="modal" data-bs-target="#modalTop-@x.CampaignId-@y.CampaignslistsId-@z.UserIdFkNavigation.UserId">
+														<div>@z.UserIdFkNavigation.UserName (@z.UserIdFkNavigation.UserId)</div>
+														<div>@z.Status</div>
+													</div>
+													<!-- Modal -->
+													<div class="modal modal-top fade" id="modalTop-@x.CampaignId-@y.CampaignslistsId-@z.UserIdFkNavigation.UserId" tabindex="-1">
+														<div class="modal-dialog">
+															<div class="modal-content">
+																<div class="modal-header">
+																	<h5 class="modal-title" id="modalTopTitle">Detail Of User @z.UserIdFkNavigation.UserName (@z.UserIdFkNavigation.UserId)</h5>
+																	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+																</div>
+
+																<div class="modal-body" style="color: black;">
+																	@foreach (var acc in ViewBag.accounts as List<Account>)
+																	{
+																		if (acc.CustomerIdFk == z.UserIdFkNavigation.UserId)
+																		{
+																			var statusName = "Bound";
+																			var s = 1;
+																			if (z.UserIdFkNavigation.Status == 1)
+																			{
+																				s = 0;
+																				statusName = "Bound";
+																			}
+																			else
+																			{
+																				s = 1;
+																				statusName = "Inbound";
+																			}
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Status:</label>
+																						<span>@statusName</span>
+																					</div>
+																				</div>
+																				@* <div class="col-md-6">
+																					<div class="form-group">
+																						<label>Update Status</label>
+																						<a asp-controller="Dashboards" asp-action="updateStatus" asp-route-id="@acc.UserIdFk" asp-route-status="@s">
+																							Update
+																						</a>
+																					</div>
+																				</div> *@
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Contract ID:</label>
+																						<span>@acc.Accountid</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>User ID:</label>
+																						<span>@acc.UserIdFk</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Product:</label>
+																						<span>@acc.Product</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Customer Account Number:</label>
+																						<span>@acc.Customeracnumber</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Center:</label>
+																						<span>@acc.CenterIdFk</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Product:</label>
+																						<span>@acc.ProductIdFk</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>CM Mobile:</label>
+																						<span>@acc.CmMobile</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>CM Home:</label>
+																						<span>@acc.CmHome</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>CM Work:</label>
+																						<span>@acc.CmWork</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>CM Reference 1:</label>
+																						<span>@acc.CmRef1</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>CM Reference 2:</label>
+																						<span>@acc.CmRef2</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>CM Home Address:</label>
+																						<span>@acc.CmHomeaddress</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>CM Work Address:</label>
+																						<span>@acc.CmWorkaddress</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Outstanding Balance:</label>
+																						<span>@acc.Outstandingbalance</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Contract Amount:</label>
+																						<span>@acc.Contractamount</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Overdue Amount:</label>
+																						<span>@acc.Overdueamount</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Minimum Payment:</label>
+																						<span>@acc.Minimumpayment</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Opening Balance:</label>
+																						<span>@acc.Openingbalance</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Principle Amount:</label>
+																						<span>@acc.Principleamount</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Legal Status:</label>
+																						<span>@acc.Legalstatus</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Cycle Date:</label>
+																						<span>@acc.Cycledate</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Bucket:</label>
+																						<span>@acc.Bucket</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Bkt1:</label>
+																						<span>@acc.Bkt1</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Bkt2:</label>
+																						<span>@acc.Bkt2</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Bkt3:</label>
+																						<span>@acc.Bkt3</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Bkt4:</label>
+																						<span>@acc.Bkt4</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Bkt5:</label>
+																						<span>@acc.Bkt5</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Bkt6:</label>
+																						<span>@acc.Bkt6</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Chargeoff Amount:</label>
+																						<span>@acc.Chargeoffamount</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Chargeoff Date:</label>
+																						<span>@acc.Chargeoffdate</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Writtenoff Amount:</label>
+																						<span>@acc.Writtenoffamount</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Writtenoff Date:</label>
+																						<span>@acc.Writtenoffdate</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Last Payment:</label>
+																						<span>@acc.Lastpayment</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Last Payment Date:</label>
+																						<span>@acc.Lastpaymentdate</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>DPD:</label>
+																						<span>@acc.Dpd</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>DPD 0-6:</label>
+																						<span>@acc.Dpd06</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>DPD 6-12:</label>
+																						<span>@acc.Dpd712</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>DPD 12-24:</label>
+																						<span>@acc.Dpd1318</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>DPD 24+:</label>
+																						<span>@acc.Dpd37plus</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>PO Box No:</label>
+																						<span>@acc.Poboxno</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Special Info:</label>
+																						<span>@acc.Specialinfo</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Status:</label>
+																						<span>@acc.Status</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-12">
+																					<div class="form-group">
+																						<label>Remarks:</label>
+																						<span>@acc.Remarks</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Updated At:</label>
+																						<span>@acc.UpdatedAt</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Created At:</label>
+																						<span>@acc.CreatedAt</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Organization ID:</label>
+																						<span>@acc.OrganizationIdFk</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Country ID:</label>
+																						<span>@acc.CountryIdFk</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Region ID:</label>
+																						<span>@acc.RegionIdFk</span>
+																					</div>
+																				</div>
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Segment ID:</label>
+																						<span>@acc.SegmentIdFk</span>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<div class="form-group">
+																						<label>Email ID:</label>
+																						<span>@acc.EmailIdFk</span>
+																					</div>
+																				</div>
+																			</div>
+
+																		}
+																	}
+																</div>
+
+
+																<div class="modal-footer">
+																	<button type="button" class="btn btn-label-primary" data-bs-dismiss="modal">Close</button>
+																</div>
+															</div>
+														</div>
+													</div>
+										}
+									}
+									@if(count==0){
+										<p>No users Found</p>
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+				}
+				
+			}
+			}
+			else
+			{
+				<p>No items in the list.</p>
+			}
+	</div>
+	<!--/ Accordion with Icon -->
+	}
+	}
+	else
+	{
+	<p>No Campaigns Yet....</p>
+	}
+</div>
+
+<!--/ Advance Styling Options -->

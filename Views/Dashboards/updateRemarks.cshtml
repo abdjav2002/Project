@@ -1,0 +1,972 @@
+@using Newtonsoft.Json
+@model AspnetCoreMvcFull.Models.Account
+
+@{
+	ViewData["Title"] = "Update-Remarks";
+
+	Note accountNotes = null;
+
+	if (ViewBag.notes != null)
+	{
+		accountNotes = ViewBag.notes as Note;
+	}
+
+	// Serialize ViewBag.statusCode with ReferenceHandler.Preserve
+	var statusCodeJson = JsonConvert.SerializeObject(ViewBag.statusCode, new JsonSerializerSettings
+			{
+				ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+			});
+
+	// Output the serialized JSON for debugging
+				<script>
+					console.log("Serialized JSON: ", @Html.Raw(statusCodeJson));
+				</script>
+}
+
+<script>
+	// Attempt to parse the JSON data
+	try {
+		var statusCodeList = JSON.parse(@Html.Raw(statusCodeJson));
+		console.log("Parsed JSON: ", statusCodeList);
+	} catch (error) {
+		console.error("Error parsing JSON: ", error);
+	}
+</script>
+@section VendorStyles {
+
+	<link rel="stylesheet" href="~/vendor/libs/flatpickr/flatpickr.css" />
+	<link rel="stylesheet" href="~/vendor/libs/select2/select2.css" />
+
+	<style>
+		/* Style for each section */
+		/* Width of scrollbar */
+		.sectionC::-webkit-scrollbar {
+			width: 20px;
+		}
+
+		/* Track */
+		.sectionC::-webkit-scrollbar-track {
+			box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.5), inset -5px -5px 10px rgba(0, 0, 0, 0.5);
+			border-radius: 2px;
+			background-color: #0082c4;
+		}
+
+		/* Handle */
+		.sectionC::-webkit-scrollbar-thumb {
+			background: white;
+			border-radius: 2px;
+			box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.5), inset -5px -5px 10px rgba(0, 0, 0, 0.5);
+			border: 2px solid black;
+		}
+
+			/* Handle on hover */
+			.sectionC::-webkit-scrollbar-thumb:hover {
+				background: #8387ff;
+			}
+
+		.sectionC {
+			height: 200px;
+			/* Set height for each section */
+			overflow-y: auto;
+			/* Enable vertical scrollbar when content overflows */
+			border: 1px solid #ccc;
+			/* Add border for visual clarity */
+			margin-bottom: 20px;
+			/* Add some space between sections */
+		}
+
+		.myheading {
+			font-weight:bold;
+			font-size:13px;
+		}
+
+			.myheading + span {
+				/* Styles for the adjacent .uname span */
+				/* Example styles: */
+				color: blue; /* Change color to blue */
+				font-size: 11px;
+			}
+
+			.myheading2{
+				padding-left:85px;
+				padding-right: 2px;
+				color:black;
+				background-color: white;
+			border: 2px solid #0c648f;
+			}
+
+		.myheading3 {
+			padding-left: 15px;
+			padding-right: 10px;
+			color: black;
+			background-color: white;
+			border: 2px solid #0c648f;
+		}
+	</style>
+}
+@section VendorScripts {
+	<script src="~/vendor/libs/cleavejs/cleave.js"></script>
+	<script src="~/vendor/libs/cleavejs/cleave-phone.js"></script>
+	<script src="~/vendor/libs/moment/moment.js"></script>
+	<script src="~/vendor/libs/flatpickr/flatpickr.js"></script>
+	<script src="~/vendor/libs/select2/select2.js"></script>
+}
+@section PageScripts {
+	<script src="~/js/form-layouts.js"></script>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			// Get the button
+			var button = document.querySelector('#next-id');
+
+			// Add click event listener
+			button.addEventListener('click', function () {
+				// Select all table rows except the header row
+				var rows = document.querySelectorAll('#rest-of-id span');
+				var accountIds = [];
+
+				// Iterate through each row
+				rows.forEach(function (row) {
+					// Get the accountId attribute value
+					var accountId = row.getAttribute('id');
+					accountIds.push(accountId);
+				});
+				console.log(accountIds);
+				// Construct URL with query parameters
+				var url = '/Dashboards/UpdateRemarks?id=' + accountIds.join('&id=');
+				console.log(url);
+
+				// Redirect the user to the constructed URL
+				window.location.href = url;
+			});
+		});
+
+	</script>
+}
+
+@* <script>
+	function toggleFields() {
+		console.log("in fn");
+		var statusCode = document.getElementById('status-code').value;
+		var AmountField = document.getElementById('amount-row');
+		var DateField = document.getElementById('date-row');
+
+		if (statusCode == '3') {
+		console.log("in ptp");
+			AmountField.style.display = 'block';
+			DateField.style.display = 'block';
+		} else {
+			AmountField.style.display = 'none';
+			DateField.style.display = 'none';
+		}
+
+	}
+
+	// Attach change event listener to the status code dropdown
+	document.getElementById('status-code').addEventListener('change', toggleFields);
+
+	// Call the function initially to set the initial visibility state
+	toggleFields();
+</script> *@
+
+
+
+<script>
+	function toggleFields() {
+		var data = @Html.Raw(statusCodeJson);
+		console.log("Serialized JSON: ", data);
+		var selectedOption = document.getElementById('status-code').value;
+		var selectedStatusCode;
+		for (var i = 0; i < data.length; i++) {
+			console.log("Item " + i + ": ", data[i]);
+			if (selectedOption == data[i].StatusId) {
+				selectedStatusCode = data[i];
+			}
+		}
+
+		// Access specific properties of the selected status code object
+		if (selectedStatusCode) {
+			console.log("Status Code: " + selectedStatusCode.Statuscode1);
+			console.log("Amount: " + selectedStatusCode.Amount);
+			console.log("FollowupDate: " + selectedStatusCode.FollowupDate);
+		}
+
+		var AmountField = document.getElementById('amount-row');
+		var DateField = document.getElementById('date-row');
+
+		document.getElementById('amount-title').innerHTML = selectedStatusCode.Statuscode1 + " Amount";
+		document.getElementById('date-title').innerHTML = selectedStatusCode.Statuscode1 + " Date";
+
+		if (selectedStatusCode.Amount==1 && selectedStatusCode.FollowupDate==1) {
+			AmountField.style.display = 'block';
+			DateField.style.display = 'block';
+		}
+		else if (selectedStatusCode.Amount==1){
+			AmountField.style.display = 'block';
+			DateField.style.display = 'none';
+		}
+		else if (selectedStatusCode.FollowupDate == 1) {
+			AmountField.style.display = 'none';
+			DateField.style.display = 'block';
+		}
+		else {
+			AmountField.style.display = 'none';
+			DateField.style.display = 'none';
+		}
+	}
+
+	// Attach change event listener to the status code dropdown
+	document.getElementById('status-code').addEventListener('change', toggleFields);
+
+	// Call the function initially to set the initial visibility state
+	toggleFields();
+</script>
+
+
+
+
+<div class="row" style="background-color:white;max-height: 450px;">
+	<div class="col-2 sectionC" style="	overflow:scroll;overflow-x: hidden;">
+		<div><span class="myheading">CM NAME: </span><span>@Model.CustomerIdFkNavigation!.Uname</span></div>
+		<div><span class="myheading">CM ID: </span><span>@Model.CustomerIdFk</span></div>
+		<div><span class="myheading">A/C NO: </span><span>@Model.Accountid</span></div>
+		<div><span class="myheading">Product: </span><span>@Model.ProductIdFkNavigation!.Pname</span></div>
+		<div><span class="myheading">Opening Date: </span><span>@Model.CreatedAt</span></div>
+		<div><span class="myheading">Gender: </span><span>@Model.CustomerIdFkNavigation!.Gender</span></div>
+		<div>
+		<span class="myheading">DOB: </span><span>@Model.CustomerIdFkNavigation!.Dob</span>
+		</div>
+		<div>
+		<span class="myheading">Passport: </span><span>@Model.CustomerIdFkNavigation!.Passport</span>
+		</div>
+		<div>
+		<span class="myheading">Passport Exp: </span><span>@Model.CustomerIdFkNavigation!.Passportexpiry</span>
+		</div>
+		<div>
+		<span class="myheading">Cnic: </span><span>@Model.CustomerIdFkNavigation!.Cnic</span>
+		</div>
+		<div>
+		<span class="myheading">Cnic Exp: </span><span>@Model.CustomerIdFkNavigation!.Cnicexpiry</span>
+		</div>
+		<div><span class="myheading">PO Box: </span><span>@Model.Poboxno</span></div>
+
+	</div>
+						<div class="col-2 sectionC" style="overflow:scroll;overflow-x: hidden;">
+		<div><span class="myheading">Total O/S: </span><span>@Model.Outstandingbalance</span></div>
+		<div><span class="myheading">Overdue Amount: </span><span>@Model.Overdueamount</span></div>
+		<div><span class="myheading">Minimum Amount: </span><span>@Model.Minimumpayment</span></div>
+		<div><span class="myheading">Principal Amount: </span><span>@Model.Principleamount</span></div>
+		<div><span class="myheading">Home Address: </span><span>@Model.CmHomeaddress</span></div>
+		<div><span class="myheading">CM Mobile: </span><span>@Model.CmMobile</span></div>
+
+						</div>
+	<div class="col-2 sectionC" style="overflow:scroll;overflow-x: hidden;">
+		<div>
+			<span class="myheading">Cycle Date:</span>
+			<span>@Model.Cycledate</span>
+		</div>
+
+		<div>
+			<span class="myheading">Last Amount:</span>
+			<span>@Model.Lastpayment</span>
+		</div>
+
+		<div>
+			<span class="myheading">Last Date:</span>
+			<span>@Model.Lastpaymentdate</span>
+		</div>
+
+		<div>
+			<span class="myheading">2nd Last Amount:</span>
+			<span>@Model.Secondlastpayment</span>
+		</div>
+
+		<div>
+			<span class="myheading">2nd Last Date:</span>
+			<span>@Model.Secondlastpaymentdate</span>
+		</div>
+
+		<div>
+			<span class="myheading">3rd Last Amount:</span>
+			<span>@Model.Thirdlastpayment</span>
+		</div>
+
+		<div>
+			<span class="myheading">3rd Last Date:</span>
+			<span>@Model.ThirdlastpaymentDate</span>
+		</div>
+
+		<div>
+			<span class="myheading">4th Last Amount:</span>
+			<span>@Model.Fourthlastpayment</span>
+		</div>
+
+		<div>
+			<span class="myheading">4th Last Date:</span>
+			<span>@Model.FourthlastpaymentDate</span>
+		</div>
+
+		<div>
+			<span class="myheading">5th Last Amount:</span>
+			<span>@Model.Fifthlastpayment</span>
+		</div>
+
+		<div>
+			<span class="myheading">5th Last Date:</span>
+			<span>@Model.FifthlastpaymentDate</span>
+		</div>
+
+		<div>
+			<span class="myheading">6th Last Amount:</span>
+			<span>@Model.Sixthlastpayment</span>
+		</div>
+
+		<div>
+			<span class="myheading">6th Last Date:</span>
+			<span>@Model.SixthlastpaymentDate</span>
+		</div>
+
+		<div>
+			<span class="myheading">Contract/Chq Amount:</span>
+			<span>@Model.Contractamount</span>
+		</div>
+
+		<div>
+			<span class="myheading">Work Address:</span>
+			<span>@Model.CmWorkaddress</span>
+		</div>
+
+		<div>
+			<span class="myheading">Work No.:</span>
+			<span>@Model.CmWork</span>
+		</div>
+
+		<div>
+			<span class="myheading">Home No.:</span>
+			<span>@Model.CmHome</span>
+		</div>
+
+	</div>
+
+	<div class="col-6" style="background-color: #0c648f;color: white;">
+		<div class="row" style="border: 2px solid white;">
+			<div class="col-4">
+				<div style="display:flex;justify-content:space-between;">
+					<span style="font-weight:bold;">Alloc.Date:</span>
+				<span style="font-size:10px">22-92-2024</span>
+				</div>
+				@* <span>@Model.AllocationDate</span> *@
+				<div><span style="font-weight:bold;">Bucket: </span>@Model.Bucket</div>
+				<div style="display:flex;justify-content:space-between;">
+					<span>Bkt-1:</span>
+					<span class="myheading2">@Model.Bkt1</span>
+				</div>
+				<div style="display:flex;justify-content:space-between;">
+					<span>Bkt-2:</span>
+					<span class="myheading2">@Model.Bkt2</span>
+				</div>
+				<div style="display:flex;justify-content:space-between;">
+					<span>Bkt-3:</span>
+					<span class="myheading2">@Model.Bkt3</span>
+				</div>
+				<div style="display:flex;justify-content:space-between;">
+					<span>Bkt-4:</span>
+					<span class="myheading2">@Model.Bkt4</span>
+				</div>
+				<div style="display:flex;justify-content:space-between;">
+					<span>Bkt-5:</span>
+					<span class="myheading2">@Model.Bkt5</span>
+				</div>
+				<div style="display:flex;justify-content:space-between;">
+					<span>Bkt-6:</span>
+					<span class="myheading2">@Model.Bkt6</span>
+				</div>
+			</div>
+			<div class="col-4">
+				<div style="display:flex;justify-content:space-between;">
+					<span class="myheading">ORG: </span>
+				<span style="font-size:10px">@Model.OrganizationIdFkNavigation!.Organizationname</span>
+				</div>
+				<div><span class="myheading">DPD:</span>@Model.Dpd</div>
+				<div style="display:flex;justify-content:space-between;"><span>0-6:</span><span class="myheading2">@Model.Dpd06</span></div>
+				<div style="display:flex;justify-content:space-between;"><span>7-12:</span><span class="myheading2">@Model.Dpd712</span></div>
+				<div style="display:flex;justify-content:space-between;"><span>13-18:</span><span class="myheading2">@Model.Dpd1318</span></div>
+				<div style="display:flex;justify-content:space-between;"><span>19-24:</span><span class="myheading2">@Model.Dpd1924</span></div>
+				<div style="display:flex;justify-content:space-between;"><span>25-36:</span><span class="myheading2">@Model.Dpd2536</span></div>
+				<div style="display:flex;justify-content:space-between;"><span>37+:</span><span class="myheading2">@Model.Dpd37plus</span></div>
+			</div>
+			<div class="col-4">
+				<div style="display:flex;justify-content:space-between;">
+					<span class="myheading">Segment: </span>
+				<span style="font-size:10px">@Model.SegmentIdFkNavigation!.Segmentname</span>
+				</div>
+				<div><span class="myheading">PMT History:</span></div>
+				<div style="display:flex;justify-content:space-between;"><span>07/04/23:</span><span class="myheading3">133.90</span></div>
+				<div style="display:flex;justify-content:space-between;"><span>07/04/23:</span><span class="myheading3">234.90</span></div>
+				<div style="display:flex;justify-content:space-between;"><span>07/04/23:</span><span class="myheading3">653.90</span></div>
+				<div style="display:flex;justify-content:space-between;"><span>07/04/23:</span><span class="myheading3">456.90</span></div>
+				<div style="display:flex;justify-content:space-between;"><span>07/04/23:</span><span class="myheading3">643.90</span></div>
+				<div style="display:flex;justify-content:space-between;"><span>07/04/23:</span><span class="myheading3">257.90</span></div>
+			</div>
+		</div>
+		<div class="row" style="border-top: 2px solid white;">
+			<div class="col-6" style="border:2px solid white">
+					<div><span class="myheading">Charge Of Amount: </span><span style="float:inline-end;color:white;">@Model.Chargeoffamount</span></div>
+					<div><span class="myheading">Written Of Amount: </span><span style="float:inline-end;color:white;">@Model.Writtenoffamount</span></div>
+			</div>
+			<div class="col-6" style="border:2px solid white">
+				<div><span class="myheading">Charge Of Date: </span><span style="float:inline-end;color:white;">@Model.Chargeoffdate</span></div>
+				<div><span class="myheading">Written Of Date: </span><span style="float:inline-end;color:white;">@Model.Writtenoffdate</span></div>
+				
+			</div>
+		</div>
+		<div class="row" style="background-color:#0c648f">
+			@{
+				var wrong = 0;
+				var ptp = 0;
+				var cb = 0;
+				var bp = 0;
+				var rnr = 0;
+				var askt = 0;
+				var skip = 0;
+				var vsd = 0;
+
+				if (ViewBag.remarks != null && ViewBag.remarks.Count > 0)
+				{
+					foreach (var x in ViewBag.remarks as List<Remark>)
+					{
+						if(x.StatuscodeIdFkNavigation!.Statuscode1!.ToLower() == "wrong")
+						{
+							wrong++;
+						}
+						else if (x.StatuscodeIdFkNavigation!.Statuscode1!.ToLower() == "ptp")
+						{
+							ptp++;
+						}
+						else if (x.ActioncodeIdFkNavigation!.Actioncode1!.ToLower() == "cb")
+						{
+							cb++;
+						}
+						else if (x.StatuscodeIdFkNavigation!.Statuscode1!.ToLower() == "bp")
+						{
+							bp++;
+						}
+						else if (x.StatuscodeIdFkNavigation!.Statuscode1!.ToLower() == "rnr")
+						{
+							rnr++;
+						}
+						else if (x.StatuscodeIdFkNavigation!.Statuscode1!.ToLower() == "askt")
+						{
+							askt++;
+						}
+						else if (x.StatuscodeIdFkNavigation!.Statuscode1!.ToLower() == "skip")
+						{
+							skip++;
+						}
+						else if (x.ActioncodeIdFkNavigation!.Actioncode1.ToLower() == "vsd")
+						{
+							vsd++;
+						}
+					}
+				}
+			}
+			<div class="col-2" style="text-align:center;border:2px solid white">
+				<div style="border-bottom:2px solid white">
+					<div>Attempts</div>
+					<div>@ViewBag.remarks.Count</div>
+				</div>
+				<div>
+					<div>Wrong</div>
+					<div>@wrong</div>
+				</div>
+			</div>
+			<div class="col-2" style="text-align:center;border:2px solid white">
+				<div style="border-bottom:2px solid white">
+				<div>PTP</div>
+				<div>@ptp</div>
+				</div>
+				<div>
+				<div>CB</div>
+				<div>@cb</div>
+				</div>
+			</div>
+			<div class="col-2" style="text-align:center;border:2px solid white">
+				<div style="border-bottom:2px solid white">
+				<div>BP</div>
+				<div>@bp</div>
+				</div>
+				<div>
+				<div>RNR</div>
+				<div>@rnr</div>
+				</div>
+			</div>
+			<div class="col-2" style="text-align:center;border:2px solid white">
+				<div style="border-bottom:2px solid white">
+				<div>ASKT</div>
+				<div>@askt</div>
+				</div>
+				<div>
+				<div>SKIP</div>
+				<div>@skip</div>
+				</div>
+			</div>
+			<div class="col-2" style="text-align:center;border:2px solid white">
+				<div style="border-bottom:2px solid white">
+				<div>ASKT</div>
+				<div>@askt</div>
+				</div>
+				<div>
+				<div>VSD</div>
+				<div>@vsd</div>
+				</div>
+			</div>
+			<div class="col-2" style="background-color: white">
+				
+			</div>
+		</div>
+	</div>
+
+
+</div>
+
+@{
+	// Access the IDs from ViewBag and convert them to an array of strings
+	var ids = ViewBag.accId as int[];
+
+	// Remove the first ID from the array
+	var restOfIds = ids!.Skip(1).ToArray();
+}
+
+<div class="row" style="display:none;">
+	
+
+	<!-- Display the first ID if needed -->
+	@if (ids!.Length > 0)
+	{
+		<div>
+			First ID: @ids[0]
+		</div>
+	}
+	<div id="rest-of-id">
+		@foreach (var x in restOfIds)
+		{
+			<span id="@x">@x</span>
+		}
+	</div>
+</div>
+
+<div class="row mt-3">
+	<div class="col-3"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTop-notes" style="cursor:pointer;">Add Note</button></div>
+	<div class="col-3"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTop-remarks" style="cursor:pointer;">Add Action</button></div>
+	@if (restOfIds.Length > 0)
+	{
+		<div class="col-3">
+			<button class="btn btn-primary" id="next-id" style="cursor:pointer;">Next</button>
+			
+		</div>
+	}
+	else
+	{
+		<div class="col-3">
+			<a asp-action="officerLists" asp-route-id="@restOfIds">
+				<button class="btn btn-primary" style="cursor:pointer;">Finish</button>
+			</a>
+		</div>
+	}
+</div>
+
+
+<div class="row mt-3">
+	<div class="col-6 sectionC" style="max-height150px;overflow:scroll;overflow-x: hidden;">
+		<div class="row">
+			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+				<div>Action Date</div>
+					</div>
+			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+				<div>Action By</div>
+			</div>
+			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+				<div>Action Code</div>
+			</div>
+			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+				<div>Status Code</div>
+			</div>
+			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+				<div>PTP Amount</div>
+			</div>
+			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+				<div>PTP Date</div>
+			</div>
+				</div>
+				<div class="row">
+			@if (ViewBag.remarks != null && ViewBag.remarks.Count > 0)
+			{
+			foreach (var r in ViewBag.remarks as List<Remark>
+				)
+				{
+				<div class="col-2">@r.CreatedAt</div>
+				<div class="col-2">@r.UserIdFkNavigation!.UserName</div>
+				<div class="col-2">@r.ActioncodeIdFkNavigation!.Actioncode1</div>
+				<div class="col-2">@r.StatuscodeIdFkNavigation!.Statuscode1</div>
+				<div class="col-2">@r.PtpAmount</div>
+					<div class="col-2">@r.PtpDate</div>
+				}}
+			else
+			{
+				<p>No Record</p>
+			}
+		</div>
+			</div>
+			<div class="col-6">
+		<div class="row">
+			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+				<div>Number Called</div>
+			</div>
+			<div class="col-6" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+				<div>Remarks</div>
+			</div>
+			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+				<div>C Num</div>
+			</div>
+			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+				<div>Recording</div>
+			</div>
+		</div>
+		<div class="row">
+			@if (ViewBag.remarks != null && ViewBag.remarks.Count > 0)
+			{
+				foreach (var r in ViewBag.remarks as List<Remark>
+				)
+				{
+					<div class="col-2">
+						32456734
+					</div>
+					<div class="col-6">
+						@r.RemarkText
+					</div>
+					<div class="col-2">
+					</div>
+					<div class="col-2">
+					</div>
+				}
+			}
+			else
+			{
+				<p>No Record</p>
+			}
+		</div>
+			</div>
+		</div>
+
+
+
+
+<div class="modal modal-top fade" id="modalTop-remarks" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalTopTitle">Remarks</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" style="color: black;">
+
+				<!-- Basic Layout & Basic with Icons -->
+				<div class="row">
+					<!-- Basic Layout -->
+					<div class="col-xxl">
+						<div class="card mb-4">
+							@* <div class="card-header d-flex align-items-center justify-content-between">
+								<h5 class="mb-0">Create Action</h5>
+							</div> *@
+							<div class="card-body">
+								<form id="updateRemarksForm" asp-action="updateRemarks" method="post">
+									<div asp-validation-summary="All" class="text-danger"></div>
+									<!-- Hidden input for Accountid -->
+									@{
+										var ids2 = ViewBag.accId as int[];
+										string idsString = string.Join(",", ids2);
+									}
+
+									<input type="hidden" value="@ViewBag.accIdSingle" name="accountIdd" />
+									<input type="hidden" value="@idsString" name="idd" />
+
+									<!-- Remarks field -->
+									<div class="row mb-3">
+										<label class="col-sm-4 col-form-label" for="ActionCode">Remarks</label><br />
+										<div class="col-sm-8">
+											<input type="text" class="form-control" id="rem" required name="Remarkss" placeholder="Enter Remarks" />
+											<span id="rem-error-msg" style="color:red"></span>
+										</div>
+									</div>
+
+									<!-- Status Code dropdown -->
+									<div class="row mb-3">
+										<label class="col-sm-4 col-form-label" for="multicol-country">Status Code</label>
+										<div class="col-sm-8">
+											@if (ViewBag.statusCode != null)
+											{
+												<select id="status-code" class="select2 form-select" data-allow-clear="true" name="StatuscodeId" required onchange="toggleFields()">
+													<option value="" disabled selected required>-- select status code --</option>
+													@foreach (var s in ViewBag.statusCode as List<Statuscode>)
+													{
+														<option value="@s.StatusId">@s.Statuscode1</option>
+													}
+												</select>
+											}
+											else
+											{
+												<span>No Status Code Available</span>
+											}
+										</div>
+										<span id="status-code-error-msg" style="color:red"></span>
+									</div>
+
+									<!-- Action Code dropdown -->
+									<div class="row mb-3">
+										<label class="col-sm-4 col-form-label" for="multicol-country">Action Code</label>
+										<div class="col-sm-8">
+											@if (ViewBag.actionCode != null)
+											{
+												<select id="action-code" class="select2 form-select" data-allow-clear="true" name="ActioncodeId" required>
+													<option value="" disabled selected required>-- select action code --</option>
+													@foreach (var s in ViewBag.actionCode as List<Actioncode>)
+													{
+														<option value="@s.ActionId">@s.Actioncode1</option>
+													}
+												</select>
+											}
+											else
+											{
+												<span>No Action Code Available</span>
+											}
+										</div>
+										<span id="action-code-error-msg" style="color:red"></span>
+									</div>
+
+									<!-- Amount field -->
+									<div class="row mb-3" id="amount-row" style="display: none;">
+										<label class="col-sm-4 col-form-label" for="PtpAmount" id="amount-title">Amount</label><br />
+										<div class="col-sm-8">
+											<input type="number" class="form-control" id="amount" required name="PtpAmount" min="0" />
+										</div>
+										<span id="amount-error-msg" style="color:red"></span>
+									</div>
+
+									<!-- Date field -->
+									<div class="row mb-3" id="date-row" style="display: none;">
+										<label class="col-sm-4 col-form-label" for="PtpDate" id="date-title">Date</label><br />
+										<div class="col-sm-8">
+											<input type="date" class="form-control" id="date" required name="PtpDate" />
+										</div>
+										<span id="date-error-msg" style="color:red"></span>
+									</div>
+
+									<!-- Submit button -->
+									<div class="row justify-content-end">
+										<div class="col-sm-10">
+											<button type="button" class="btn btn-primary form-control" id="submitUpdateRemarks">Add Action</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-label-primary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal modal-top fade" id="modalTop-notes" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalTopTitle">Note (Skip tracing) Check list</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" style="color: black;">
+
+				<!-- Basic Layout & Basic with Icons -->
+				<div class="row">
+					<!-- Basic Layout -->
+					<div class="col-xxl">
+						<div class="card mb-4">
+							@* <div class="card-header d-flex align-items-center justify-content-between">
+							<h5 class="mb-0">Create Action</h5>
+							</div> *@
+							<div class="card-body">
+								<form id="notesForm" asp-action="addNote" method="post">
+
+									<input type="hidden" value="@ViewBag.accIdSingle" name="id" />
+
+									<div class="row mb-3">
+										<label class="col-sm-4 col-form-label" style="font-size: 0.85rem;" for="EmiratesId">EmiratesId</label><br />
+										<div class="col-sm-6">
+											<input type="text" value="@((accountNotes != null) ? accountNotes.EmiratesId : string.Empty)" class="form-control" id="EmiratesId" name="EmiratesId" placeholder="Enter here..." />
+											<span id="EmiratesId-error-msg" style="color:red"></span>
+										</div>
+										<div class="col-sm-2">
+											<button type="button" class="btn btn-primary" id="submitNote-1">Done</button>
+										</div>
+									</div>
+
+
+									<div class="row mb-3">
+										<label class="col-sm-4 col-form-label" style="font-size: 0.85rem;" for="SocOrRecWeb">SocOrRecWeb</label><br />
+										<div class="col-sm-6">
+											<input type="text" value="@((accountNotes != null) ? accountNotes.SocOrRecWeb : string.Empty)" class="form-control" id="SocOrRecWeb" name="SocOrRecWeb" placeholder="Enter here..." />
+											<span id="SocOrRecWeb-error-msg" style="color:red"></span>
+										</div>
+										<div class="col-sm-2">
+											<button type="button" class="btn btn-primary" id="submitNote-2">Done</button>
+										</div>
+									</div>
+
+									<div class="row mb-3">
+										<label class="col-sm-4 col-form-label" style="font-size: 0.85rem;" for="CompanySearch">CompanySearch</label><br />
+										<div class="col-sm-6">
+											<input type="text" value="@((accountNotes != null) ? accountNotes.CompanySearch : string.Empty)" class="form-control" id="CompanySearch" name="CompanySearch" placeholder="Enter here..." />
+											<span id="CompanySearch-error-msg" style="color:red"></span>
+										</div>
+										<div class="col-sm-2">
+											<button type="button" class="btn btn-primary" id="submitNote-3">Done</button>
+										</div>
+									</div>
+
+									<div class="row mb-3">
+										<label class="col-sm-4 col-form-label" style="font-size: 0.85rem;" for="ImmigrationChk">ImmigrationChk</label><br />
+										<div class="col-sm-6">
+											<input type="text" value="@((accountNotes != null) ? accountNotes.ImmigrationChk : string.Empty)" class="form-control" id="ImmigrationChk" name="ImmigrationChk" placeholder="Enter here..." />
+											<span id="ImmigrationChk-error-msg" style="color:red"></span>
+										</div>
+										<div class="col-sm-2">
+											<button type="button" class="btn btn-primary" id="submitNote-4">Done</button>
+										</div>
+									</div>
+
+									<div class="row mb-3">
+										<label class="col-sm-4 col-form-label" style="font-size: 0.85rem;" for="EmailSearchOrBobox">EmailSearchOrBobox</label><br />
+										<div class="col-sm-6">
+											<input type="text" value="@((accountNotes != null) ? accountNotes.EmailSearchOrBobox : string.Empty)" class="form-control" id="EmailSearchOrBobox" name="EmailSearchOrBobox" placeholder="Enter here..." />
+											<span id="EmailSearchOrBobox-error-msg" style="color:red"></span>
+										</div>
+										<div class="col-sm-2">
+											<button type="button" class="btn btn-primary" id="submitNote-5">Done</button>
+										</div>
+									</div>
+
+									<div class="row mb-3">
+										<label class="col-sm-4 col-form-label" style="font-size: 0.85rem;" for="NewContactOrAddress">NewContactOrAddress</label><br />
+										<div class="col-sm-6">
+											<input type="text" value="@((accountNotes != null) ? accountNotes.NewContactOrAddress : string.Empty)" class="form-control" id="NewContactOrAddress" name="NewContactOrAddress" placeholder="Enter here..." />
+											<span id="NewContactOrAddress-error-msg" style="color:red"></span>
+										</div>
+										<div class="col-sm-2">
+											<button type="button" class="btn btn-primary" id="submitNote-6">Done</button>
+										</div>
+									</div>
+
+									<div class="row mb-3">
+										<label class="col-sm-4 col-form-label" style="font-size: 0.85rem;" for="SpecialInfo">SpecialInfo</label><br />
+										<div class="col-sm-6">
+											<input type="text" value="@((accountNotes != null) ? accountNotes.SpecialInfo : string.Empty)" class="form-control" id="SpecialInfo" name="SpecialInfo" placeholder="Enter here..." />
+											<span id="SpecialInfo-error-msg" style="color:red"></span>
+										</div>
+										<div class="col-sm-2">
+											<button type="button" class="btn btn-primary" id="submitNote-7">Done</button>
+										</div>
+									</div>
+
+									<div class="row mb-3">
+										<label class="col-sm-4 col-form-label" style="font-size: 0.85rem;" for="Feedback">Feedback</label><br />
+										<div class="col-sm-6">
+											<input type="text" value="@((accountNotes != null) ? accountNotes.Feedback : string.Empty)" class="form-control" id="Feedback" name="Feedback" placeholder="Enter here..." />
+											<span id="Feedback-error-msg" style="color:red"></span>
+										</div>
+										<div class="col-sm-2">
+											<button type="button" class="btn btn-primary" id="submitNote-8">Done</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-label-primary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	// Add event listeners to multiple elements
+	['submitNote-1', 'submitNote-2', 'submitNote-3', 'submitNote-4', 'submitNote-5', 'submitNote-6','submitNote-7', 'submitNote-8'].forEach(function (id) {
+		document.getElementById(id).addEventListener('click', function () {
+			// If both fields are filled, submit the form
+			document.getElementById('notesForm').submit();
+			// Hide the modal with the id 'modalTop-notes' using jQuery
+			$('#modalTop-notes').modal('hide');
+		});
+	});
+</script>
+
+
+<script>
+	document.getElementById('submitUpdateRemarks').addEventListener('click', function () {
+		// Check if amount and date fields are empty
+		var amountValue = document.getElementById('amount-row').querySelector('input').value.trim();
+		var dateValue = document.getElementById('date-row').querySelector('input').value.trim();
+		var amountDisplay = document.getElementById('amount-row').style.display;
+		var dateDisplay = document.getElementById('date-row').style.display;
+		var amountTitle = document.getElementById('amount-title').innerHTML;
+		var dateTitle = document.getElementById('date-title').innerHTML;
+
+					var p = document.getElementById('rem').value.trim();
+					var q = document.getElementById('status-code').value.trim();
+					var r = document.getElementById('action-code').value.trim();
+
+		if (p=='' || p==null) {
+			document.getElementById('rem-error-msg').innerHTML = "Remarks is required";
+		}
+
+		if (q=='' || q==null) {
+			document.getElementById('status-code-error-msg').innerHTML = "Remarks is required";
+		}
+
+		if (r == '' || r == null) {
+			document.getElementById('action-code-error-msg').innerHTML = "Remarks is required";
+		}
+
+		// If either amount or date is empty, display them and prevent form submission
+		if (amountDisplay != 'none' && dateDisplay != 'none') {
+			// document.getElementById('amount-row').style.display = 'block';
+			// document.getElementById('date-row').style.display = 'block';
+			if (amountValue === '' && dateValue === '') {
+				document.getElementById('amount-error-msg').innerHTML = "Amount is required";
+				document.getElementById('date-error-msg').innerHTML = "Amount is required";
+				return; // Prevent form submission
+			}
+			else if (amountValue === '') {
+				document.getElementById('amount-error-msg').innerHTML = amountTitle + " is required";
+				return; // Prevent form submission
+			}
+			else if (dateValue === '') {
+				document.getElementById('date-error-msg').innerHTML = dateTitle + " is required";
+				return; // Prevent form submission
+			}
+		}
+
+		// If both fields are filled, submit the form
+		document.getElementById('updateRemarksForm').submit();
+		$('#modalTop-remarks').modal('hide');
+	});
+</script>
+

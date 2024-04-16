@@ -1,0 +1,146 @@
+@model List<Account>
+
+@{
+	ViewData["Title"] = "Summary";
+
+	var c_det = ViewBag.list as Campaignslist;
+}
+
+<div class="row">
+	<div class="col-3">
+		<div class="row"><center><h4>ALLOCATION STAT</h4></center></div>
+		<div class="row">
+			<table border="1">
+				<tr>
+					<td>
+						<span>Allo.A/C: </span>
+						<span>@c_det.CreatedAt</span>
+					</td>
+					<td>
+						<span>Allo.O/S: </span>
+						<span>@ViewBag.os</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<span>Target: </span>
+						<span>@c_det.Target</span>
+					</td>
+					<td>
+						<span>Tot.Rec: </span>
+						<span>@Model.Count()</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<span>PTP Acc: </span>
+						<span>@ViewBag.ptp</span>
+					</td>
+					<td>
+						<span>PTP Amt: </span>
+						<span>@ViewBag.a_ptp</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<span>BP Acc: </span>
+						<span>@ViewBag.bp</span>
+					</td>
+					<td>
+						<span>BP Amt: </span>
+						<span>@ViewBag.a_bp</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<span>Cont Acc: </span>
+						<span>@ViewBag.cont</span>
+					</td>
+					<td>
+						<span>Cont Amt: </span>
+						<span>@ViewBag.a_cont</span>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="col-3">
+		<div class="row"><center><h4>CALLING GAPS</h4></center></div>
+		<div class="row">
+			<table border="1">
+				<tr>
+					<td>>25 Not Working A/C:</td>
+					<td>@ViewBag.t_25</td>
+					<td>Amt: @ViewBag.a_25</td>
+				</tr>
+				<tr>
+					<td>>15 Not Working A/C:</td>
+					<td>@ViewBag.t_15</td>
+					<td>Amt: @ViewBag.a_15</td>
+				</tr>
+				<tr>
+					<td>>10 Not Working A/C:</td>
+					<td>@ViewBag.t_10</td>
+					<td>Amt: @ViewBag.a_10</td>
+				</tr>
+				<tr>
+					<td>>5 Not Working A/C:</td>
+					<td>@ViewBag.t_5</td>
+					<td>Amt: @ViewBag.a_5</td>
+				</tr>
+				<tr>
+					<td>>3 Not Working A/C:</td>
+					<td>@ViewBag.t_3</td>
+					<td>Amt: @ViewBag.a_3</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="col-3">
+		<div class="row"></div>
+		<div class="row"><center>MTD PRODUCTIVITY</center></div>
+	</div>
+	<div class="col-3">
+		<div class="row"></div>
+		<div class="row"><center>MTD PERFORMANCE</center></div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-3">
+		<div class="row">
+			<div class="col-6">
+				<span>NON-Cont Acc: </span>
+				<span>@ViewBag.nonCont</span>
+			</div>
+			<div class="col-6">
+				<span>NON-Cont Amt: </span>
+				<span>@ViewBag.a_nonCont</span>
+			</div>
+		</div>
+	</div>
+	<div class="col-3">
+		<div class="row">
+			<div class="col-6">
+				<span>SKIP Acc: </span>
+				<span>@ViewBag.skip</span>
+			</div>
+			<div class="col-6">
+				<span>SKIP Amt: </span>
+				<span>@ViewBag.a_skip</span>
+			</div>
+		</div>
+	</div>
+	<div class="col-3">
+		<div class="row">
+			<div class="col-6">
+				<span>WRONG Acc: </span>
+				<span>@ViewBag.wrong</span>
+			</div>
+			<div class="col-6">
+				<span>WRONG Amt: </span>
+				<span>@ViewBag.a_wrong</span>
+			</div>
+		</div>
+	</div>
+</div>

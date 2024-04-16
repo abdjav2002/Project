@@ -1,0 +1,138 @@
+@model List<Account>
+
+@{
+	ViewData["Title"] = "Customer Detail";
+	var det = ViewBag.user as Account;
+}
+
+
+@section VendorStyles {
+<style>
+  .myHead{
+	  font-weight: bold;
+	  font-size:19px;
+  }
+</style>
+}
+<h4 class="py-3 mb-4">
+	<span class="text-muted fw-light">Customer Info</span> Accounts(@Model.Count())
+	</h4>
+<div class="row">
+	<div class="col-4">
+		<div class="row">
+			<div class="col-6 myHead">ID:</div>
+			<div class="col-6">@det!.CustomerIdFkNavigation!.UserId</div>
+		</div>
+	</div>
+	<div class="col-4">
+		<div class="row">
+			<div class="col-6 myHead">Name:</div>
+			<div class="col-6">@det.CustomerIdFkNavigation!.UserName</div>
+		</div>
+	</div>
+	<div class="col-4">
+		<div class="row">
+			<div class="col-6 myHead">Email:</div>
+			<div class="col-6">@det!.EmailIdFkNavigation!.Email1</div>
+		</div>
+	</div>
+	<div class="col-4">
+		<div class="row">
+			<div class="col-6 myHead">Gender:</div>
+			<div class="col-6">@det!.CustomerIdFkNavigation!.Gender</div>
+		</div>
+	</div>
+	<div class="col-4">
+		<div class="row">
+			<div class="col-6 myHead">DOB:</div>
+			<div class="col-6">@det.CustomerIdFkNavigation!.Dob</div>
+		</div>
+	</div>
+	<div class="col-4">
+		<div class="row">
+			<div class="col-6 myHead">Status:</div>
+			@{
+				var s = det!.CustomerIdFkNavigation!.Status;
+			}
+			<div class="col-6">@(s==-1?"DNC":"Active")</div>
+		</div>
+	</div>
+	<div class="col-6">
+		<div class="row">
+			<div class="col-6 myHead">Cnic:</div>
+			<div class="col-6">@det!.CustomerIdFkNavigation!.Cnic (@det!.CustomerIdFkNavigation!.Cnicexpiry)</div>
+		</div>
+	</div>
+	<div class="col-6">
+		<div class="row">
+			<div class="col-6 myHead">Passport:</div>
+			<div class="col-6">@det!.CustomerIdFkNavigation!.Passport (@det!.CustomerIdFkNavigation!.Passportexpiry)</div>
+		</div>
+	</div>
+</div>
+
+<h5>Currently Assigned To</h5>
+<div class="row">
+	@if (ViewBag.assigned != null && ViewBag.assigned.Count > 0)
+	{
+		foreach (var x in ViewBag.assigned as List<Campaignslistuser>)
+		{
+			<div class="col-3">
+				<div class="row">
+					<div class="col-6 myHead">Officer:</div>
+					<div class="col-6">@x.CampaignslistsIdFkNavigation!.UserIdFkNavigation!.UserName (@x.CampaignslistsIdFkNavigation!.UserIdFkNavigation!.UserId)</div>
+				</div>
+			</div>
+			<div class="col-3">
+				<div class="row">
+					<div class="col-6 myHead">Campaign:</div>
+					<div class="col-6">@x.CampaignslistsIdFkNavigation!.CampaignIdFkNavigation!.CampaignName</div>
+				</div>
+			</div>
+			<div class="col-3">
+				<div class="row">
+					<div class="col-6 myHead">List:</div>
+					<div class="col-6">@x.CampaignslistsIdFkNavigation!.CampaignslistsName</div>
+				</div>
+			</div>
+			<div class="col-3">
+				<div class="row">
+					<div class="col-6 myHead">Assinged At:</div>
+					<div class="col-6">@x.CreatedAt</div>
+				</div>
+			</div>
+		}
+	}
+</div>
+
+<h5>
+	<a asp-action="accounts" asp-route-id="@det.Accountid">
+		<button class="btn btn-info">History Of Account.No @det!.Customeracnumber</button>
+	</a>
+</h5>
+<div class="row">
+	@if (Model != null && Model.Count() > 0)
+	{
+		foreach (var x in Model)
+		{
+			<div class="col-3">
+				<div class="row">
+					<div class="col-6 myHead">Opening Balance:</div>
+					<div class="col-6">@x.Openingbalance</div>
+				</div>
+			</div>
+			<div class="col-3">
+				<div class="row">
+					<div class="col-6 myHead">Overdue:</div>
+					<div class="col-6">@x.Overdueamount</div>
+				</div>
+			</div>
+			<div class="col-3">
+				<div class="row">
+					<div class="col-6 myHead">Added At:</div>
+					<div class="col-6">@x.CreatedAt</div>
+				</div>
+			</div>
+		}
+	}
+</div>

@@ -1,0 +1,80 @@
+@model AspnetCoreMvcFull.Models.Campaignslist
+
+@{
+	ViewData["Title"] = "Horizontal Form - Form Layouts";
+}
+@section VendorStyles {
+
+	<link rel="stylesheet" href="~/vendor/libs/flatpickr/flatpickr.css" />
+	<link rel="stylesheet" href="~/vendor/libs/select2/select2.css" />
+}
+@section VendorScripts {
+	<script src="~/vendor/libs/cleavejs/cleave.js"></script>
+	<script src="~/vendor/libs/cleavejs/cleave-phone.js"></script>
+	<script src="~/vendor/libs/moment/moment.js"></script>
+	<script src="~/vendor/libs/flatpickr/flatpickr.js"></script>
+	<script src="~/vendor/libs/select2/select2.js"></script>
+}
+@section PageScripts {
+	<script src="~/js/form-layouts.js"></script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			var form = document.querySelector("form");
+			form.addEventListener("submit", function (event) {
+				var targetInput = document.getElementById("Target");
+				var targetValue = parseInt(targetInput.value);
+				var totalValue = parseInt("@ViewBag.total");
+
+				console.log("wait");
+
+				if (targetValue > totalValue) {
+					event.preventDefault(); // Prevent form submission
+					alert("Target value cannot be greater than total value.");
+				}
+			});
+		});
+	</script>
+}
+
+<h4 class="py-3 mb-4"><span class="text-muted fw-light">Set/</span>Target</h4>
+
+<div class="row">
+	<div style="display:flex;justify-content:space-around;">
+		<h5 class="py-3 mb-4"><span class="text-muted fw-light">Current Target: </span>@Model.Target</h5>
+		<h5 class="py-3 mb-4"><span class="text-muted fw-light">Total OverDue Amount (In List): </span>@ViewBag.total</h5>
+	</div>
+
+	<div class="col-xxl">
+		<div class="card mb-4">
+			<div class="card-header d-flex align-items-center justify-content-between">
+				<h5 class="mb-0">Create Campaign</h5>
+			</div>
+			<div class="card-body">
+				<form asp-action="Target" method="post" id="targetForm">
+					<input type="hidden" value="@ViewBag.id" asp-for="CampaignslistsId" />
+					<div asp-validation-summary="All" class="text-danger"></div>
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" asp-for="Target">Target</label>
+						<div class="col-sm-10">
+							<input type="number" min="0" max="@ViewBag.total" class="form-control" id="Target" value="@Model.Target" asp-for="Target" placeholder="Enter Campaign Name" />
+						</div>
+					</div>
+					<div class="row justify-content-end">
+						<div class="col-sm-10">
+							<button type="submit" class="btn btn-primary">Set Target</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+@* <form asp-action="Target" method="post">
+	<div class="form-group">
+		<label asp-for="Target" class="control-label"></label>
+		<input asp-for="Target" class="form-control" />
+		<span asp-validation-for="Target" class="text-danger"></span>
+	</div>
+	<button type="submit" class="btn btn-primary">Save</button>
+</form> *@

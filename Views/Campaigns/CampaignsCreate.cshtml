@@ -1,0 +1,57 @@
+@model AspnetCoreMvcFull.Models.Campaign
+
+@{
+	ViewData["Title"] = "Horizontal Form - Form Layouts";
+}
+@section VendorStyles {
+
+	<link rel="stylesheet" href="~/vendor/libs/flatpickr/flatpickr.css" />
+	<link rel="stylesheet" href="~/vendor/libs/select2/select2.css" />
+}
+@section VendorScripts {
+	<script src="~/vendor/libs/cleavejs/cleave.js"></script>
+	<script src="~/vendor/libs/cleavejs/cleave-phone.js"></script>
+	<script src="~/vendor/libs/moment/moment.js"></script>
+	<script src="~/vendor/libs/flatpickr/flatpickr.js"></script>
+	<script src="~/vendor/libs/select2/select2.js"></script>
+}
+@section PageScripts {
+	<script src="~/js/form-layouts.js"></script>
+}
+
+@* ************** Content ************** *@
+<h4 class="py-3 mb-4"><span class="text-muted fw-light">Add/</span>Campaigns</h4>
+
+<!-- Basic Layout & Basic with Icons -->
+<div class="row">
+	<!-- Basic Layout -->
+	<div class="col-xxl">
+		<div class="card mb-4">
+			<div class="card-header d-flex align-items-center justify-content-between">
+				<h5 class="mb-0">Create Campaign</h5>
+			</div>
+			<div class="card-body">
+				<form asp-action="CampaignsCreate" method="post">
+					<div asp-validation-summary="All" class="text-danger"></div>
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="CampaignName">Campaign Name</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="CampaignName" asp-for="CampaignName" placeholder="Enter Campaign Name" />
+						</div>
+					</div>
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="CampaignDesc">Campaign Description</label>
+						<div class="col-sm-10">
+							<textarea id="CampaignDesc" class="form-control" asp-for="CampaignDesc" placeholder="Enter Campaign Description"></textarea>
+						</div>
+					</div>
+					<div class="row justify-content-end">
+						<div class="col-sm-10">
+							<button type="submit" class="btn btn-primary">Create Campaign</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
