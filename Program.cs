@@ -29,6 +29,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                }
                );
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8081";
+builder.WebHost.UseUrls($"http://*:{port}");
+
 var app = builder.Build();
 
 // Create a service scope to get an AspnetCoreMvcFullContext instance using DI and seed the database.
@@ -47,7 +50,7 @@ if (!app.Environment.IsDevelopment())
   app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();  //for production...comment out
 app.UseStaticFiles();
 
 app.UseRouting();

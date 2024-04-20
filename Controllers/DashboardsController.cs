@@ -601,13 +601,13 @@ public class DashboardsController : BaseController
           .ToListAsync();
 
       ViewBag.accounts = await _db.Accounts
+          .Include(a => a.UserIdFkNavigation)
           .Include(a => a.CountryIdFkNavigation)
           .Include(a => a.RegionIdFkNavigation)
           .Include(a => a.SegmentIdFkNavigation)
           .Include(a => a.OrganizationIdFkNavigation)
           .Include(a => a.EmailIdFkNavigation)
           .Include(a => a.CustomerIdFkNavigation)
-          .Include(a => a.UserIdFkNavigation)
           .OrderByDescending(a => a.CreatedAt)
           .ToListAsync();
 
