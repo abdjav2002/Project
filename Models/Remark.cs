@@ -25,6 +25,8 @@ public partial class Remark
 
   public string? PtpDate { get; set; }
 
+  public string? FollowUpDate { get; set; }
+
   public virtual Account? AccountIdFkNavigation { get; set; }
 
   public virtual Actioncode? ActioncodeIdFkNavigation { get; set; }

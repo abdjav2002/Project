@@ -31,6 +31,10 @@ public partial class DebtsyncContext : DbContext
 
   public virtual DbSet<Email> Emails { get; set; }
 
+  public virtual DbSet<Emailacc> Emailaccs { get; set; }
+
+  public virtual DbSet<Emailtext> Emailtexts { get; set; }
+
   public virtual DbSet<Nationality> Nationalities { get; set; }
 
   public virtual DbSet<Note> Notes { get; set; }
@@ -41,8 +45,6 @@ public partial class DebtsyncContext : DbContext
 
   public virtual DbSet<Product> Products { get; set; }
 
-  public virtual DbSet<Profile> Profiles { get; set; }
-
   public virtual DbSet<Region> Regions { get; set; }
 
   public virtual DbSet<Remark> Remarks { get; set; }
@@ -50,6 +52,10 @@ public partial class DebtsyncContext : DbContext
   public virtual DbSet<Role> Roles { get; set; }
 
   public virtual DbSet<Segment> Segments { get; set; }
+
+  public virtual DbSet<Smsacc> Smsaccs { get; set; }
+
+  public virtual DbSet<Smstext> Smstexts { get; set; }
 
   public virtual DbSet<Statuscode> Statuscodes { get; set; }
 
@@ -380,6 +386,43 @@ public partial class DebtsyncContext : DbContext
       entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
     });
 
+    modelBuilder.Entity<Emailacc>(entity =>
+    {
+      entity.HasKey(e => e.EmailAccId).HasName("emailacc_pkey");
+
+      entity.ToTable("emailacc");
+
+      entity.Property(e => e.EmailAccId).HasColumnName("email_acc_id");
+      entity.Property(e => e.AccountIdFk).HasColumnName("account_id_fk");
+      entity.Property(e => e.CreatedAt)
+              .HasColumnType("time with time zone")
+              .HasColumnName("created_at");
+      entity.Property(e => e.EmailtextIdFk).HasColumnName("emailtext_id_fk");
+
+      entity.HasOne(d => d.AccountIdFkNavigation).WithMany(p => p.Emailaccs)
+              .HasForeignKey(d => d.AccountIdFk)
+              .OnDelete(DeleteBehavior.ClientSetNull)
+              .HasConstraintName("fk_account_id_fk");
+
+      entity.HasOne(d => d.EmailtextIdFkNavigation).WithMany(p => p.Emailaccs)
+              .HasForeignKey(d => d.EmailtextIdFk)
+              .OnDelete(DeleteBehavior.ClientSetNull)
+              .HasConstraintName("fk_emailtext_id_fk");
+    });
+
+    modelBuilder.Entity<Emailtext>(entity =>
+    {
+      entity.HasKey(e => e.EmailTextId).HasName("emailtext_pkey");
+
+      entity.ToTable("emailtext");
+
+      entity.Property(e => e.EmailTextId).HasColumnName("email_text_id");
+      entity.Property(e => e.CreatedAt)
+              .HasColumnType("time with time zone")
+              .HasColumnName("created_at");
+      entity.Property(e => e.Email).HasColumnName("email");
+    });
+
     modelBuilder.Entity<Nationality>(entity =>
     {
       entity.HasKey(e => e.NationalityId).HasName("nationality_pkey");
@@ -481,25 +524,6 @@ public partial class DebtsyncContext : DbContext
               .HasColumnName("pname");
     });
 
-    modelBuilder.Entity<Profile>(entity =>
-    {
-      entity.HasKey(e => e.ProfileId).HasName("profile_pkey");
-
-      entity.ToTable("profile");
-
-      entity.Property(e => e.ProfileId).HasColumnName("profile_id");
-      entity.Property(e => e.CreatedAt).HasColumnName("created_at");
-      entity.Property(e => e.Imagepath)
-              .HasMaxLength(255)
-              .HasColumnName("imagepath");
-      entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
-      entity.Property(e => e.UserIdFk).HasColumnName("user_id_fk");
-
-      entity.HasOne(d => d.UserIdFkNavigation).WithMany(p => p.Profiles)
-              .HasForeignKey(d => d.UserIdFk)
-              .HasConstraintName("profile_user_id_fk_fkey");
-    });
-
     modelBuilder.Entity<Region>(entity =>
     {
       entity.HasKey(e => e.Regionid).HasName("regions_pkey");
@@ -522,6 +546,9 @@ public partial class DebtsyncContext : DbContext
       entity.Property(e => e.AccountIdFk).HasColumnName("account_id_fk");
       entity.Property(e => e.ActioncodeIdFk).HasColumnName("actioncode_id_fk");
       entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+      entity.Property(e => e.FollowUpDate)
+              .HasColumnType("character varying")
+              .HasColumnName("follow_up_date");
       entity.Property(e => e.PtpAmount).HasColumnName("PTP_Amount");
       entity.Property(e => e.PtpDate)
               .HasColumnType("character varying")
@@ -575,6 +602,41 @@ public partial class DebtsyncContext : DbContext
       entity.Property(e => e.Segmentname)
               .HasMaxLength(255)
               .HasColumnName("segmentname");
+    });
+
+    modelBuilder.Entity<Smsacc>(entity =>
+    {
+      entity.HasKey(e => e.SmsAccId).HasName("smsacc_pkey");
+
+      entity.ToTable("smsacc");
+
+      entity.Property(e => e.SmsAccId).HasColumnName("sms_acc_id");
+      entity.Property(e => e.AccountIdFk).HasColumnName("account_id_fk");
+      entity.Property(e => e.CreatedAt)
+              .HasColumnType("time with time zone")
+              .HasColumnName("created_at");
+      entity.Property(e => e.SmsIdFk).HasColumnName("sms_id_fk");
+
+      entity.HasOne(d => d.AccountIdFkNavigation).WithMany(p => p.Smsaccs)
+              .HasForeignKey(d => d.AccountIdFk)
+              .OnDelete(DeleteBehavior.ClientSetNull)
+              .HasConstraintName("fk_account_id_fk");
+
+      entity.HasOne(d => d.SmsIdFkNavigation).WithMany(p => p.Smsaccs)
+              .HasForeignKey(d => d.SmsIdFk)
+              .OnDelete(DeleteBehavior.ClientSetNull)
+              .HasConstraintName("fk_sms_id_fk");
+    });
+
+    modelBuilder.Entity<Smstext>(entity =>
+    {
+      entity.HasKey(e => e.SmsTextId).HasName("smstext_pkey");
+
+      entity.ToTable("smstext");
+
+      entity.Property(e => e.SmsTextId).HasColumnName("sms_text_id");
+      entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+      entity.Property(e => e.Sms).HasColumnName("sms");
     });
 
     modelBuilder.Entity<Statuscode>(entity =>

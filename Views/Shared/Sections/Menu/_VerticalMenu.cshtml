@@ -64,21 +64,31 @@
 						</a>
 					</li>
 					<li class='menu-item@(currentPage == "/Dashboards/history" ? " active" : "")'>
-						<a asp-controller="Dashboards" asp-action="history" class="menu-link" target="blank">
+						<a asp-controller="Dashboards" asp-action="history" class="menu-link">
 							<div data-i18n="History">History</div>
 						</a>
 					</li>
 					<li class='menu-item@(currentPage == "/Dashboards/actioncode" ? " active" : "")'>
-						<a asp-controller="Dashboards" asp-action="actioncode" class="menu-link" target="blank">
+						<a asp-controller="Dashboards" asp-action="actioncode" class="menu-link">
 							<div data-i18n="Action Code">Action Code</div>
 						</a>
 					</li>
 					<li class='menu-item@(currentPage == "/Dashboards/statuscode" ? " active" : "")'>
-						<a asp-controller="Dashboards" asp-action="statuscode" class="menu-link" target="blank">
+						<a asp-controller="Dashboards" asp-action="statuscode" class="menu-link">
 							<div data-i18n="Status Code">Status Code</div>
 						</a>
 					</li>
-			</ul>
+					<li class='menu-item@(currentPage == "/Dashboards/Emails" ? " active" : "")'>
+						<a asp-controller="Dashboards" asp-action="Emails" class="menu-link">
+							<div data-i18n="Emails">Emailse</div>
+						</a>
+					</li>
+					<li class='menu-item@(currentPage == "/Dashboards/Sms" ? " active" : "")'>
+						<a asp-controller="Dashboards" asp-action="Sms" class="menu-link">
+							<div data-i18n="Sms">Sms</div>
+						</a>
+					</li>
+				</ul>
 			</li>
 		}
 		else if (Convert.ToInt32(roleIdClaim?.Value) == 3)

@@ -55,8 +55,6 @@ public partial class User
 
   public virtual ICollection<Nationality> Nationalities { get; set; } = new List<Nationality>();
 
-  public virtual ICollection<Profile> Profiles { get; set; } = new List<Profile>();
-
   public virtual ICollection<Remark> Remarks { get; set; } = new List<Remark>();
 
   public virtual Role? RoleIdFkNavigation { get; set; }

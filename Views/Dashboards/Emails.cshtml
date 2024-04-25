@@ -1,0 +1,73 @@
+@model List<Emailtext>
+
+@{
+	ViewData["Title"] = "Emailss";
+	var count = 1;
+}
+@section VendorStyles {
+
+	<style>
+		.myList{
+			cursor:pointer;
+			background-color:white;
+			border: 1px solid grey;
+		}
+	</style>
+}
+
+@* ************** Content ************** *@
+
+<h4 class="py-3 mb-4">
+	<span class="text-muted fw-light">Emails /</span> Total-@Model.Count()
+	<a asp-controller="Dashboards" asp-action="EmailCreate" style="float:right"><button class="dt-button add-new btn btn-primary waves-effect waves-light">Add Email</button></a>
+</h4>
+<div class="row">
+	<hr class="m-0">
+<div class="app-email-view-content py-4">
+<div class="email-list pt-0">
+	<ul class="list-unstyled m-0">
+				@foreach (var x in Model){
+					<li class="email-list-item myList" data-starred="true" onclick="openEmailPage('@x.EmailTextId')" data-bs-toggle="sidebar" data-target="#app-email-view" id="Email-@x.EmailTextId">
+			<div class="d-flex align-items-center">
+				@* <div class="form-check mb-0">
+					<input class="email-list-item-input form-check-input" type="checkbox" id="email-1">
+					<label class="form-check-label" for="email-1"></label>
+				</div>
+				<i class="email-list-item-bookmark ti ti-star ti-sm d-sm-inline-block d-none cursor-pointer ms-2 me-3"></i>
+				<img src="~/img/avatars/1.png" alt="user-avatar" class="d-block flex-shrink-0 rounded-circle me-sm-3 me-2" height="32" width="32" /> *@
+				<div class="email-list-item-content ms-2 ms-sm-0 me-2">
+					<span class="h6 email-list-item-username me-2">@count</span>
+								<span class="email-list-item-subject d-xl-inline-block d-block">
+									@if (x.Email.Length > 50)
+									{
+										@x.Email.Substring(0, 50)
+									}
+									else
+									{
+										@x.Email
+									}
+								</span>
+				</div>
+				<div class="email-list-item-meta ms-auto d-flex align-items-center">
+					@* <span class="email-list-item-label badge badge-dot bg-danger d-none d-md-inline-block me-2" data-label="private"></span> *@
+					<small class="email-list-item-time text-muted">@x.CreatedAt</small>
+					@* <ul class="list-inline email-list-item-actions text-nowrap">
+						<li class="list-inline-item email-read"> <i class='ti ti-mail-opened ti-sm'></i> </li>
+						<li class="list-inline-item email-delete"> <i class='ti ti-trash ti-sm'></i></li>
+						<li class="list-inline-item"> <i class="ti ti-archive ti-sm"></i> </li>
+					</ul> *@
+				</div>	
+			</div>
+		</li>
+		}
+	</ul>
+</div>
+</div>
+</div>
+
+<script>
+	function openEmailPage(emailId) {
+		// Redirect to the new page with the email ID as a parameter
+		window.location.href = '/Dashboards/EmailDetail?id=' + emailId; // Replace '/Email/Details' with the actual URL of your email details page
+	}
+</script>

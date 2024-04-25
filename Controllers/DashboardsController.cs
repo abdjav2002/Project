@@ -8,6 +8,7 @@ using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using NuGet.Packaging.Signing;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace AspnetCoreMvcFull.Controllers;
 
@@ -20,6 +21,161 @@ public class DashboardsController : BaseController
   {
     
   }
+
+  public async Task<IActionResult> EmailCreate()
+  {
+    // Retrieve all users with role ID 2 and status not equal to -1 from the database
+    //var users = await _db.Users.Where(u => u.RoleIdFk == 2 && u.Status != -1).ToListAsync();
+
+    // Retrieve accounts for the filtered users
+    var acc = await _db.Accounts
+      .Include(a => a.CenterIdFkNavigation)
+      .Include(a => a.CountryIdFkNavigation)
+      .Include(a => a.CustomerIdFkNavigation)
+      .Include(a => a.EmailIdFkNavigation)
+      .Include(a => a.OrganizationIdFkNavigation)
+      .Include(a => a.ProductIdFkNavigation)
+      .Include(a => a.RegionIdFkNavigation)
+      .Include(a => a.RemarksNavigation)
+      .Include(a => a.SegmentIdFkNavigation)
+      .Include(a => a.UserIdFkNavigation)
+      .OrderByDescending(a => a.CreatedAt)
+      //.Where(a => users.Any(u => u.UserId == a.CustomerIdFk))
+      .ToListAsync();
+
+    ViewBag.acc = acc;
+
+    return View();
+  }
+
+
+  // POST: Campaignslistusers/Create
+  [HttpPost]
+  [ValidateAntiForgeryToken]
+  public async Task<IActionResult> EmailCreate(Emailtext emails, int[] selectedIds)
+  {
+
+    var emailobj = new Emailtext
+    {
+      Email = emails.Email,
+      CreatedAt = DateTime.UtcNow
+    };
+     _db.Add(emailobj);
+    await _db.SaveChangesAsync();
+
+
+    foreach (var id in selectedIds)
+      {
+        var obj = new Emailacc
+        {
+          EmailtextIdFk = emailobj.EmailTextId,
+          AccountIdFk = id,
+          CreatedAt = DateTime.UtcNow
+        };
+        _db.Add(obj);
+        await _db.SaveChangesAsync();
+      }
+
+      
+    return RedirectToAction(nameof(EmailDetail), new { id = emailobj.EmailTextId });
+  }
+
+  public async Task<IActionResult> Emails()
+  {
+    var email = await _db.Emailtexts.ToListAsync();
+    return View(email);
+  }
+
+  public async Task<IActionResult> EmailDetail(int? id)
+  {
+    if (id == null)
+    {
+      return NotFound();
+    }
+    var email = await _db.Emailaccs
+      .Include(x=>x.EmailtextIdFkNavigation)
+      .Include(x=>x.AccountIdFkNavigation)
+      .Where(a => a.EmailtextIdFk == id).ToListAsync();
+    return View(email);
+  }
+
+  public async Task<IActionResult> SmsCreate()
+  {
+    // Retrieve all users with role ID 2 and status not equal to -1 from the database
+    //var users = await _db.Users.Where(u => u.RoleIdFk == 2 && u.Status != -1).ToListAsync();
+
+    // Retrieve accounts for the filtered users
+    var acc = await _db.Accounts
+      .Include(a => a.CenterIdFkNavigation)
+      .Include(a => a.CountryIdFkNavigation)
+      .Include(a => a.CustomerIdFkNavigation)
+      .Include(a => a.EmailIdFkNavigation)
+      .Include(a => a.OrganizationIdFkNavigation)
+      .Include(a => a.ProductIdFkNavigation)
+      .Include(a => a.RegionIdFkNavigation)
+      .Include(a => a.RemarksNavigation)
+      .Include(a => a.SegmentIdFkNavigation)
+      .Include(a => a.UserIdFkNavigation)
+      .OrderByDescending(a => a.CreatedAt)
+      //.Where(a => users.Any(u => u.UserId == a.CustomerIdFk))
+      .ToListAsync();
+
+    ViewBag.acc = acc;
+
+    return View();
+  }
+
+
+  [HttpPost]
+  [ValidateAntiForgeryToken]
+  public async Task<IActionResult> SmsCreate(Smstext smss, int[] selectedIds)
+  {
+
+    var smsobj = new Smstext
+    {
+      Sms = smss.Sms,
+      CreatedAt = DateTime.UtcNow
+    };
+    _db.Add(smsobj);
+    await _db.SaveChangesAsync();
+
+
+    foreach (var id in selectedIds)
+    {
+      var obj = new Smsacc
+      {
+        SmsIdFk = smsobj.SmsTextId,
+        AccountIdFk = id,
+        CreatedAt = DateTime.UtcNow
+      };
+      _db.Add(obj);
+      await _db.SaveChangesAsync();
+    }
+
+
+    return RedirectToAction(nameof(SmsDetail), new { id = smsobj.SmsTextId });
+  }
+
+  public async Task<IActionResult> Sms()
+  {
+    var email = await _db.Smstexts.ToListAsync();
+    return View(email);
+  }
+
+  public async Task<IActionResult> SmsDetail(int? id)
+  {
+    if (id == null)
+    {
+      return NotFound();
+    }
+    var email = await _db.Smsaccs
+      .Include(x => x.SmsIdFkNavigation)
+      .Include(x => x.AccountIdFkNavigation)
+      .Where(a => a.SmsIdFk == id).ToListAsync();
+    return View(email);
+  }
+
+
 
   // Method for inserting a new Note record
   public async Task<IActionResult> addNote(int id,String? EmiratesId,
@@ -248,7 +404,7 @@ public class DashboardsController : BaseController
             var acc = _db.Accounts.OrderByDescending(x => x.CreatedAt).FirstOrDefault(x => x.CustomerIdFk == a.UserIdFk);
             if (acc != null)
             {
-              var r = _db.Remarks.Include(q=>q.StatuscodeIdFkNavigation).Include(q => q.ActioncodeIdFkNavigation).OrderByDescending(x => x.CreatedAt).Where(x => x.AccountIdFk == acc.Accountid && x.PtpDate == currentDate).ToList();
+              var r = _db.Remarks.Include(q=>q.StatuscodeIdFkNavigation).Include(q => q.ActioncodeIdFkNavigation).OrderByDescending(x => x.CreatedAt).Where(x => x.AccountIdFk == acc.Accountid && x.FollowUpDate == currentDate).ToList();
               if (r != null)
               {
                 foreach (var item in r)
@@ -413,8 +569,21 @@ public class DashboardsController : BaseController
     return View(result);
   }
 
+  public IActionResult searchAccount(string number)
+  {
+    var x = _db.Accounts.Where(a => a.Customeracnumber == number).FirstOrDefault();
+    if (x != null)
+    {
+      return RedirectToAction(nameof(updateRemarks), new { id = x.Accountid });
+    }
+    else
+    {
+      return RedirectToAction(nameof(OfficerLists));
+    }
+  }
 
-  public IActionResult updateRemarks(int[] id)
+
+    public IActionResult updateRemarks(int[] id)
   {
     if (id.Length <= 0)
     {
@@ -442,7 +611,7 @@ public class DashboardsController : BaseController
   }
 
   [HttpPost]
-  public IActionResult UpdateRemarks(int accountIdd,int StatuscodeId,String Remarkss, int ActioncodeId, String PtpAmount,String PtpDate,String[] idd)
+  public IActionResult UpdateRemarks(int accountIdd,int StatuscodeId,String Remarkss, String FollowUpDate, int ActioncodeId, String PtpAmount,String PtpDate,String[] idd)
   {
     //int[] ids = idd.Split(',').Select(int.Parse).ToArray();
     int[] ids = idd[0].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
@@ -457,6 +626,7 @@ public class DashboardsController : BaseController
         RemarkText = Remarkss,
         PtpAmount = Convert.ToInt32(PtpAmount),
         PtpDate = PtpDate,
+        FollowUpDate = FollowUpDate,
         StatuscodeIdFk = StatuscodeId,
         ActioncodeIdFk = ActioncodeId,
         UserIdFk = userId,

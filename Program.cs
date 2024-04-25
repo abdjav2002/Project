@@ -50,7 +50,7 @@ if (!app.Environment.IsDevelopment())
   app.UseHsts();
 }
 
-//app.UseHttpsRedirection();  //for production...comment out
+//app.UseHttpsRedirection();  //for production...comment out  
 app.UseStaticFiles();
 
 app.UseRouting();

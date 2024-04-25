@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace AspnetCoreMvcFull.Models;
@@ -155,6 +155,8 @@ public partial class Account
 
   public virtual Email? EmailIdFkNavigation { get; set; }
 
+  public virtual ICollection<Emailacc> Emailaccs { get; set; } = new List<Emailacc>();
+
   public virtual ICollection<Note> Notes { get; set; } = new List<Note>();
 
   public virtual Organization? OrganizationIdFkNavigation { get; set; }
@@ -168,6 +170,8 @@ public partial class Account
   public virtual ICollection<Remark> RemarksNavigation { get; set; } = new List<Remark>();
 
   public virtual Segment? SegmentIdFkNavigation { get; set; }
+
+  public virtual ICollection<Smsacc> Smsaccs { get; set; } = new List<Smsacc>();
 
   public virtual User? UserIdFkNavigation { get; set; }
 }

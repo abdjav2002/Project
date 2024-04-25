@@ -37,7 +37,7 @@ namespace AspnetCoreMvcFull.Controllers
               var acc = _db.Accounts.OrderByDescending(x=>x.CreatedAt).FirstOrDefault(x=>x.CustomerIdFk==a.UserIdFk);
               if(acc != null)
               {
-                var r = _db.Remarks.OrderByDescending(x => x.CreatedAt).Where(x => x.AccountIdFk == acc.Accountid && x.PtpDate == currentDate).ToList();
+                var r = _db.Remarks.OrderByDescending(x => x.CreatedAt).Where(x => x.AccountIdFk == acc.Accountid && x.FollowUpDate == currentDate).ToList();
                 //var r = _db.Remarks.Include(x => x.StatuscodeIdFkNavigation).OrderByDescending(x => x.CreatedAt).Where(x => x.AccountIdFk == acc.Accountid && x.PtpDate == currentDate).ToList();
                 if (r != null)
                 {
