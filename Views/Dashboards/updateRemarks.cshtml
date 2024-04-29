@@ -4,6 +4,12 @@
 @{
 	ViewData["Title"] = "Update-Remarks";
 
+	// Access the IDs from ViewBag and convert them to an array of strings
+	var ids = ViewBag.accId as int[];
+
+	// Remove the first ID from the array
+	var restOfIds = ids!.Skip(1).ToArray();
+
 	Note accountNotes = null;
 
 	if (ViewBag.notes != null)
@@ -222,10 +228,29 @@
 	toggleFields();
 </script>
 
-<div class="row">
-	<form asp-action="searchAccount" method="post">
-		<input placeholder="1234 5678 XXXX XXXX" name="number" />
-	</form>
+<div class="row mb-3">
+	<div class="col-6">
+		@* <form asp-action="searchAccount" method="post">
+			<input placeholder="1234 5678 XXXX XXXX" name="number" />
+		</form> *@
+	</div>
+	<div class="col-6">
+		@if (restOfIds.Length > 0)
+		{
+			<div class="col-3">
+				<button class="btn btn-primary" id="next-id" style="cursor:pointer;">Next</button>
+
+			</div>
+		}
+		else
+		{
+			<div class="col-3">
+				<a asp-action="officerLists" asp-route-id="@restOfIds">
+					<button class="btn btn-primary" style="cursor:pointer;">Finish</button>
+				</a>
+			</div>
+		}
+	</div>
 </div>
 
 
@@ -529,17 +554,7 @@
 			</div>
 		</div>
 	</div>
-
-
 </div>
-
-@{
-	// Access the IDs from ViewBag and convert them to an array of strings
-	var ids = ViewBag.accId as int[];
-
-	// Remove the first ID from the array
-	var restOfIds = ids!.Skip(1).ToArray();
-}
 
 <div class="row" style="display:none;">
 	
@@ -562,44 +577,45 @@
 <div class="row mt-3">
 	<div class="col-3"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTop-notes" style="cursor:pointer;">Add Note</button></div>
 	<div class="col-3"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTop-remarks" style="cursor:pointer;">Add Action</button></div>
-	@if (restOfIds.Length > 0)
-	{
-		<div class="col-3">
-			<button class="btn btn-primary" id="next-id" style="cursor:pointer;">Next</button>
-			
-		</div>
-	}
-	else
-	{
-		<div class="col-3">
-			<a asp-action="officerLists" asp-route-id="@restOfIds">
-				<button class="btn btn-primary" style="cursor:pointer;">Finish</button>
-			</a>
-		</div>
-	}
+	
 </div>
 
 
 <div class="row mt-3">
-	<div class="col-6 sectionC" style="max-height150px;overflow:scroll;overflow-x: hidden;">
+	<div class="col-12 sectionC" style="max-height150px;overflow-y:scroll;overflow-x: hidden;">
 		<div class="row">
-			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+			<div class="col-1" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
 				<div>Action Date</div>
 					</div>
-			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+			<div class="col-1" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
 				<div>Action By</div>
 			</div>
-			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+			<div class="col-1" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
 				<div>Action Code</div>
 			</div>
-			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+			<div class="col-1" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
 				<div>Status Code</div>
 			</div>
-			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+			<div class="col-1" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
 				<div>PTP Amount</div>
 			</div>
-			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+			<div class="col-1" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
 				<div>PTP Date</div>
+			</div>
+			<div class="col-1" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+				<div>Follow Up</div>
+			</div>
+			<div class="col-1" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+				<div>Number Called</div>
+			</div>
+			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+				<div>Remarks</div>
+			</div>
+			<div class="col-1" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+				<div>C Num</div>
+			</div>
+			<div class="col-1" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
+				<div>Recording</div>
 			</div>
 				</div>
 				<div class="row">
@@ -608,61 +624,29 @@
 			foreach (var r in ViewBag.remarks as List<Remark>
 				)
 				{
-				<div class="col-2">@r.CreatedAt</div>
-				<div class="col-2">@r.UserIdFkNavigation!.UserName</div>
-				<div class="col-2">@r.ActioncodeIdFkNavigation!.Actioncode1</div>
-				<div class="col-2">@r.StatuscodeIdFkNavigation!.Statuscode1</div>
-				<div class="col-2">@r.PtpAmount</div>
-					<div class="col-2">@r.PtpDate</div>
+				<div class="col-1">@r.CreatedAt</div>
+				<div class="col-1">@r.UserIdFkNavigation!.UserName</div>
+				<div class="col-1">@r.ActioncodeIdFkNavigation!.Actioncode1</div>
+				<div class="col-1">@r.StatuscodeIdFkNavigation!.Statuscode1</div>
+				<div class="col-1">@r.PtpAmount</div>
+					<div class="col-1">@r.PtpDate</div>
+					<div class="col-1">
+						@r.FollowUpDate
+					</div>
+					<div class="col-1">
+						32456734
+					</div>
+					<div class="col-2">
+						@r.RemarkText
+					</div>
+					<div class="col-1">
+					</div>
+					<div class="col-1">
+					</div>
 				}}
 			else
 			{
-				<p>No Record</p>
-			}
-		</div>
-			</div>
-			<div class="col-6">
-		<div class="row">
-			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
-				<div>Follow Up</div>
-			</div>
-			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
-				<div>Number Called</div>
-			</div>
-			<div class="col-4" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
-				<div>Remarks</div>
-			</div>
-			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
-				<div>C Num</div>
-			</div>
-			<div class="col-2" style="font-weight:bold;background-color:#0c648f;color:white;padding:2px;text-align:center;border:2px solid white">
-				<div>Recording</div>
-			</div>
-		</div>
-		<div class="row">
-			@if (ViewBag.remarks != null && ViewBag.remarks.Count > 0)
-			{
-				foreach (var r in ViewBag.remarks as List<Remark>
-				)
-				{
-					<div class="col-2">
-						@r.FollowUpDate
-					</div>
-					<div class="col-2">
-						32456734
-					</div>
-					<div class="col-6">
-						@r.RemarkText
-					</div>
-					<div class="col-2">
-					</div>
-					<div class="col-2">
-					</div>
-				}
-			}
-			else
-			{
-				<p>No Record</p>
+				<p style="text-align: center;font-weight:bold;">No Record</p>
 			}
 		</div>
 			</div>
@@ -690,7 +674,7 @@
 							</div> *@
 							<div class="card-body">
 								<form id="updateRemarksForm" asp-action="updateRemarks" method="post">
-									<div asp-validation-summary="All" class="text-danger"></div>
+									@* <div asp-validation-summary="All" class="text-danger"></div> *@
 									<!-- Hidden input for Accountid -->
 									@{
 										var ids2 = ViewBag.accId as int[];
@@ -753,10 +737,10 @@
 										<span id="action-code-error-msg" style="color:red"></span>
 									</div>
 
-									<div class="row mb-3" id="follow-date-row" style="display: none;">
+									<div class="row mb-3" id="follow-date-row">
 										<label class="col-sm-4 col-form-label" for="PtpDate" id="date-title">FollowUpDate</label><br />
 										<div class="col-sm-8">
-											<input type="date" class="form-control" id="date" required name="FollowUpDate" />
+											<input type="date" class="form-control" id="foll-date" required name="FollowUpDate" />
 										</div>
 										<span id="date-error-msg" style="color:red"></span>
 									</div>
@@ -879,7 +863,7 @@
 									</div>
 
 									<div class="row mb-3">
-										<label class="col-sm-4 col-form-label" style="font-size: 0.85rem;" for="NewContactOrAddress">NewContactOrAddress</label><br />
+										<label class="col-sm-4 col-form-label" style="font-size: 0.85rem;" for="NewContactOrAddress">ContactOrAddress</label><br />
 										<div class="col-sm-6">
 											<input type="text" value="@((accountNotes != null) ? accountNotes.NewContactOrAddress : string.Empty)" class="form-control" id="NewContactOrAddress" name="NewContactOrAddress" placeholder="Enter here..." />
 											<span id="ContactOrAddress-error-msg" style="color:red"></span>

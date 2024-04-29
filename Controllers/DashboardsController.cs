@@ -22,7 +22,122 @@ public class DashboardsController : BaseController
     
   }
 
-  public async Task<IActionResult> EmailCreate()
+
+  [HttpPost]
+  public async Task<IActionResult> SearchBarAdvance(string search, int searchOptions)
+  {
+    if(searchOptions == 1)
+    {
+      var x = _db.Accounts.Where(a => a.Customeracnumber == search).FirstOrDefault();
+      if (x != null)
+      {
+        return RedirectToAction(nameof(updateRemarks), new { id = x.Accountid });
+      }
+      else
+      {
+        return RedirectToAction(nameof(OfficerLists));
+      }
+    }
+    else if (searchOptions == 2)
+    {
+      var x = _db.Campaignslistusers.Where(a => a.UserIdFk == int.Parse(search)).FirstOrDefault();
+      if (x != null)
+      {
+        return RedirectToAction(nameof(summary), new { id = x.CampaignslistsIdFk });
+      }
+      else
+      {
+        return RedirectToAction(nameof(OfficerLists));
+      }
+    }
+    else if (searchOptions == 3)
+    {
+      var x = _db.Accounts.Where(a => a.Customeracnumber == search).FirstOrDefault();
+      if (x != null)
+      {
+        return RedirectToAction(nameof(updateRemarks), new { id = x.Accountid });
+      }
+      else
+      {
+        return RedirectToAction(nameof(OfficerLists));
+      }
+    }
+    else if (searchOptions == 4)
+    {
+      var x = _db.Accounts.Where(a => a.Customeracnumber == search).FirstOrDefault();
+      if (x != null)
+      {
+        return RedirectToAction(nameof(updateRemarks), new { id = x.Accountid });
+      }
+      else
+      {
+        return RedirectToAction(nameof(OfficerLists));
+      }
+    }
+    else if (searchOptions == 5)
+    {
+      var x = _db.Accounts.Where(a => a.Customeracnumber == search).FirstOrDefault();
+      if (x != null)
+      {
+        return RedirectToAction(nameof(updateRemarks), new { id = x.Accountid });
+      }
+      else
+      {
+        return RedirectToAction(nameof(OfficerLists));
+      }
+    }
+    else if (searchOptions == 6)
+    {
+      var x = _db.Accounts.Where(a => a.Customeracnumber == search).FirstOrDefault();
+      if (x != null)
+      {
+        return RedirectToAction(nameof(updateRemarks), new { id = x.Accountid });
+      }
+      else
+      {
+        return RedirectToAction(nameof(OfficerLists));
+      }
+    }
+    else if (searchOptions == 7)
+    {
+      var x = _db.Accounts.Where(a => a.Customeracnumber == search).FirstOrDefault();
+      if (x != null)
+      {
+        return RedirectToAction(nameof(updateRemarks), new { id = x.Accountid });
+      }
+      else
+      {
+        return RedirectToAction(nameof(OfficerLists));
+      }
+    }
+    else if (searchOptions == 8)
+    {
+      var x = _db.Accounts.Where(a => a.Customeracnumber == search).FirstOrDefault();
+      if (x != null)
+      {
+        return RedirectToAction(nameof(updateRemarks), new { id = x.Accountid });
+      }
+      else
+      {
+        return RedirectToAction(nameof(OfficerLists));
+      }
+    }
+    else if (searchOptions == 9)
+    {
+      var x = _db.Accounts.Where(a => a.Customeracnumber == search).FirstOrDefault();
+      if (x != null)
+      {
+        return RedirectToAction(nameof(updateRemarks), new { id = x.Accountid });
+      }
+      else
+      {
+        return RedirectToAction(nameof(OfficerLists));
+      }
+    }
+    return RedirectToAction(nameof(Index));
+  }
+
+    public async Task<IActionResult> EmailCreate()
   {
     // Retrieve all users with role ID 2 and status not equal to -1 from the database
     //var users = await _db.Users.Where(u => u.RoleIdFk == 2 && u.Status != -1).ToListAsync();
@@ -45,19 +160,20 @@ public class DashboardsController : BaseController
 
     ViewBag.acc = acc;
 
+    ViewBag.list = await _db.Emailtexts.OrderByDescending(a => a.CreatedAt).ToListAsync();
+
     return View();
   }
 
 
-  // POST: Campaignslistusers/Create
   [HttpPost]
-  [ValidateAntiForgeryToken]
-  public async Task<IActionResult> EmailCreate(Emailtext emails, int[] selectedIds)
+  public async Task<IActionResult> EmailCreate(string subject,string body, int[] selectedIds)
   {
 
     var emailobj = new Emailtext
     {
-      Email = emails.Email,
+      Subject = subject,
+      Email = body,
       CreatedAt = DateTime.UtcNow
     };
      _db.Add(emailobj);
@@ -122,6 +238,8 @@ public class DashboardsController : BaseController
 
     ViewBag.acc = acc;
 
+    ViewBag.list = await _db.Smstexts.OrderByDescending(a=>a.CreatedAt).ToListAsync();
+
     return View();
   }
 
@@ -134,6 +252,7 @@ public class DashboardsController : BaseController
     var smsobj = new Smstext
     {
       Sms = smss.Sms,
+      Subject = smss.Subject,
       CreatedAt = DateTime.UtcNow
     };
     _db.Add(smsobj);
@@ -212,6 +331,8 @@ public class DashboardsController : BaseController
     }
 
     int[] x = { id };
+
+    TempData["IntArray"] = string.Join(",", x.Select(x => x.ToString()));
 
     return RedirectToAction(nameof(updateRemarks), new { id = x });
   }
@@ -585,6 +706,19 @@ public class DashboardsController : BaseController
 
     public IActionResult updateRemarks(int[] id)
   {
+    if (TempData["IntArray"] != null)
+    {
+      string arrayString = TempData["IntArray"] as string;
+      if (!string.IsNullOrEmpty(arrayString))
+      {
+        id = arrayString.Split(',').Select(int.Parse).ToArray(); // Deserialize the string into an integer array
+        TempData["IntArray"] = null;
+      }
+      else
+      {
+        Console.WriteLine("Still Problem....");
+      }
+    }
     if (id.Length <= 0)
     {
       return RedirectToAction(nameof(OfficerLists));
@@ -636,8 +770,9 @@ public class DashboardsController : BaseController
 
       _db.Remarks.Add(newRemark);
       _db.SaveChanges();
-
+      TempData["IntArray"] = string.Join(",", ids.Select(x => x.ToString()));
       return RedirectToAction(nameof(updateRemarks), new { id = ids });
+      //return RedirectToAction(nameof(updateRemarks), new { id = new[] { 131, 134, 138 } });
     }
     ViewBag.remarks = _db.Remarks
       .Include(b => b.StatuscodeIdFkNavigation)

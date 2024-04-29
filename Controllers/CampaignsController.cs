@@ -15,10 +15,10 @@ namespace AspnetCoreMvcFull.Controllers
 
     public async Task<IActionResult> DNC()
     {
-      var UserDetail = _db.Users.Include(x => x.RoleIdFkNavigation)
+      var UserDetail = await _db.Users.Include(x => x.RoleIdFkNavigation)
         .Include(c => c.CreatedbyIdFkNavigation)
         .Include(f => f.CreatedtoIdFkNavigation)
-        .Where(a => a.RoleIdFk == 2 && a.Status==-1).ToList();
+        .Where(a => a.RoleIdFk == 2 && a.Status==-1).ToListAsync();
 
       return View(UserDetail);
     }

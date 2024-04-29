@@ -38,12 +38,29 @@
     @if (Convert.ToBoolean(TempData.Peek("menuHorizontal")).ToString() != "True")
     {
       <div class="navbar-nav align-items-center">
-        <div class="nav-item navbar-search-wrapper mb-0">
-          <a class="nav-item nav-link search-toggler d-flex align-items-center px-0 fw-normal" href="javascript:void(0);">
+			<form asp-controller="Dashboards" asp-action="SearchBarAdvance" method="post" class="nav-item navbar-search-wrapper mb-0" style="display:flex;">
+				@* <a class="nav-item nav-link search-toggler d-flex align-items-center px-0 fw-normal" href="javascript:void(0);">
             <i class="ti ti-search ti-md me-2"></i>
             <span class="d-none d-md-inline-block text-muted">Search (Ctrl+/)</span>
-          </a>
-        </div>
+          </a> *@
+				<input type="text" style="margin-right: 2rem;"
+					   class='form-control border-0'
+					   placeholder="Search..." aria-label="Search..." name="search">
+
+				<select name="searchOptions" class="form-control" style="margin-left: 2rem;">
+					<option value="1">Account No</option>
+					<option value="2">Cust.No</option>
+					<option value="3">EID/CNIC</option>
+					<option value="4">Passport</option>
+					<option value="5">Mobile</option>
+					<option value="6">Landline</option>
+					<option value="7">CM Name</option>
+					<option value="8">User ID</option>
+					<option value="9">ORG</option>
+				</select>
+
+				<button style="margin-right: 2rem;" type="submit" class="btn btn-primary">Search</button>
+			</form>
       </div>
      }
       <!-- /Search -->
@@ -512,5 +529,6 @@
       <input type="text"
         class='form-control search-input @((Convert.ToBoolean(@TempData.Peek("menuHorizontal")).ToString() == "True") ? "" : @ViewData["containerNav"]) border-0'
         placeholder="Search..." aria-label="Search...">
+		
       <i class="ti ti-x ti-sm search-toggler cursor-pointer"></i>
     </div>

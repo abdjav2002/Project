@@ -69,22 +69,61 @@
 			$('#example tbody').on('change', '.row-checkbox', function () {
 				$(this).closest('tr').toggleClass('selected');
 			});
-
-			// Print selected row IDs when clicking the button
-			// $('#print-button').on('click', function () {
-			//     var selectedRowIDs = [];
-			//     $('#example tbody tr.selected').each(function () {
-			//         var rowID = $(this).attr('id'); // Assuming each row has a unique ID
-			//         selectedRowIDs.push(rowID);
-			//     });
-			//     // Print selected row IDs
-			//     console.log(selectedRowIDs);
-			//     // You can now implement logic to use the selected row IDs as needed
-			// });
 		});
 	</script>
+
+	<script>
+		function validateForm() {
+			// Get all checkboxes
+			var checkboxes = document.querySelectorAll('.row-checkbox');
+
+			// Check if at least one checkbox is checked
+			var isChecked = false;
+			checkboxes.forEach(function (checkbox) {
+				if (checkbox.checked) {
+					isChecked = true;
+				}
+			});
+
+			// If no checkbox is checked, display an alert and prevent form submission
+			if (!isChecked) {
+				alert('Please select at least one user.');
+				return false; // Prevent form submission
+			}
+
+			return true; // Allow form submission
+		}
+	</script>
+
+	<script>
+		// JavaScript function to handle "Use" button click event
+		function FetchSubAndSms() {
+			// Clear the input fields
+			document.getElementById('sms-subject').value = '';
+			document.getElementById('sms-body').value = '';
+
+			// Get the parent accordion item of the clicked button
+			var accordionItem = event.target.closest('.accordion-item');
+
+			// Find the subject and SMS elements within the accordion item
+			var subjectElement = accordionItem.querySelector('.accordion-header button').innerText;
+			var smsElement = accordionItem.querySelector('.accordion-body').innerText;
+
+			// Log the subject and SMS content to the console
+			console.log("Subject: ", subjectElement);
+			console.log("SMS: ", smsElement);
+
+			// Set the fetched subject and SMS content in the respective input fields
+			document.getElementById('sms-subject').value = subjectElement.trim();
+			document.getElementById('sms-body').value = smsElement.trim();
+		}
+	</script>
+
 }
 
+<h4 class="py-3 mb-4">
+	<button class="dt-button add-new btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#fullscreenModal">See Templates</button>
+</h4>
 
 
 @* ************** Content ************** *@
@@ -97,14 +136,21 @@
 				<h5 class="mb-0">Mark bulk Sms</h5>
 			</div>
 			<div class="card-body">
-				<form asp-action="SmsCreate" method="post">
+				<form id="smsForm" asp-action="SmsCreate" method="post" onsubmit="return validateForm()">
 					<div asp-validation-summary="All" class="text-danger"></div>
 
 					<div class="row mb-3">
 						<div class="row mb-3">
+							<label class="col-sm-2 col-form-label" for="emailtext">Email Subject</label>
+							<div class="col-sm-10">
+								<input id="sms-subject" type="text" class="form-control" required  asp-for="Subject" placeholder="Enter Sms Subject" />
+							</div>
+						</div>
+
+						<div class="row mb-3">
 							<label class="col-sm-2 col-form-label" for="emailtext">Sms Text</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" required id="CampaignslistsName" asp-for="Sms" placeholder="Enter Sms Text" />
+								<input id="sms-body" type="text" required class="form-control" asp-for="Sms" placeholder="Enter Sms body" />
 							</div>
 						</div>
 
@@ -158,11 +204,60 @@
 								<button type="submit" class="btn btn-primary">Mark</button>
 							</div>
 						</div>
+						</div>
 				</form>
 			</div>
 		</div>
 	</div>
 </div>
 
+<!-- Modal -->
+          <div class="modal fade" id="fullscreenModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalFullTitle">Sms Templates</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+					  @if (ViewBag.list != null && ViewBag.list.Count > 0)
+					{
+						var count = 1;
+						@foreach (var y in ViewBag.list as List<Smstext>)
+						{
+							<div class="accordion mt-3 col-3" id="accordionWithIcon-@count">
+								<div class="card accordion-item">
+									<h2 class="accordion-header d-flex align-items-center">
+										<button style="border: 1px solid black;" type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionWithIcon-@(y.SmsTextId)" aria-expanded="false">
+											<i class="ti ti-star ti-xs me-2"></i>
+											@y.Subject
+										</button>
+									</h2>
 
-
+									<div id="accordionWithIcon-@(y.SmsTextId)" class="accordion-collapse collapse">
+										<hr/>
+										<div class="accordion-body">
+											<button class="btn btn-primary w-100" style="text-align:center;" onclick="FetchSubAndSms()" data-bs-dismiss="modal"><b>Use</b></button>
+										<hr/>
+											@y.Sms
+										</div>
+									</div>
+								</div>
+							</div>
+							count++;
+						}
+					}
+					else
+					{
+						<center><b>No Template...</b></center>
+					}
+				</div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
+                  @* <button type="button" class="btn btn-primary">Save changes</button> *@
+                </div>
+              </div>
+            </div>
+          </div>

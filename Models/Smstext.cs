@@ -11,5 +11,7 @@ public partial class Smstext
 
   public DateTime CreatedAt { get; set; }
 
+  public string Subject { get; set; } = null!;
+
   public virtual ICollection<Smsacc> Smsaccs { get; set; } = new List<Smsacc>();
 }

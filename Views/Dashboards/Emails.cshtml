@@ -11,6 +11,8 @@
 			cursor:pointer;
 			background-color:white;
 			border: 1px solid grey;
+			padding: 10px;
+    margin: 10px;
 		}
 	</style>
 }
@@ -25,6 +27,8 @@
 	<hr class="m-0">
 <div class="app-email-view-content py-4">
 <div class="email-list pt-0">
+			@if (Model.Count() > 0)
+			{
 	<ul class="list-unstyled m-0">
 				@foreach (var x in Model){
 					<li class="email-list-item myList" data-starred="true" onclick="openEmailPage('@x.EmailTextId')" data-bs-toggle="sidebar" data-target="#app-email-view" id="Email-@x.EmailTextId">
@@ -38,14 +42,7 @@
 				<div class="email-list-item-content ms-2 ms-sm-0 me-2">
 					<span class="h6 email-list-item-username me-2">@count</span>
 								<span class="email-list-item-subject d-xl-inline-block d-block">
-									@if (x.Email.Length > 50)
-									{
-										@x.Email.Substring(0, 50)
-									}
-									else
-									{
-										@x.Email
-									}
+									@x.Subject
 								</span>
 				</div>
 				<div class="email-list-item-meta ms-auto d-flex align-items-center">
@@ -59,8 +56,14 @@
 				</div>	
 			</div>
 		</li>
-		}
+						count++;
+					}
 	</ul>
+			}
+			else
+			{
+				<center><b>No Email Found...</b></center>
+			}
 </div>
 </div>
 </div>

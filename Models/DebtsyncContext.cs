@@ -421,6 +421,9 @@ public partial class DebtsyncContext : DbContext
               .HasColumnType("time with time zone")
               .HasColumnName("created_at");
       entity.Property(e => e.Email).HasColumnName("email");
+      entity.Property(e => e.Subject)
+              .HasMaxLength(100)
+              .HasColumnName("subject");
     });
 
     modelBuilder.Entity<Nationality>(entity =>
@@ -637,6 +640,9 @@ public partial class DebtsyncContext : DbContext
       entity.Property(e => e.SmsTextId).HasColumnName("sms_text_id");
       entity.Property(e => e.CreatedAt).HasColumnName("created_at");
       entity.Property(e => e.Sms).HasColumnName("sms");
+      entity.Property(e => e.Subject)
+              .HasMaxLength(100)
+              .HasColumnName("subject");
     });
 
     modelBuilder.Entity<Statuscode>(entity =>

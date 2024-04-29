@@ -78,12 +78,18 @@
 							<div data-i18n="Status Code">Status Code</div>
 						</a>
 					</li>
-					<li class='menu-item@(currentPage == "/Dashboards/Emails" ? " active" : "")'>
-						<a asp-controller="Dashboards" asp-action="Emails" class="menu-link">
-							<div data-i18n="Emails">Emailse</div>
+					<li class='menu-item@(currentPage == "/Campaigns/DNC" ? " active" : "")'>
+						<a asp-controller="Campaigns" asp-action="DNC" class="menu-link" target="blank">
+							<div data-i18n="DNC">DNC</div>
 						</a>
 					</li>
-					<li class='menu-item@(currentPage == "/Dashboards/Sms" ? " active" : "")'>
+					<li class='menu-item@(currentPage == "/Dashboards/Emails" ? "active" : currentPage == "/Dashboards/EmailCreate" ? "active":"")'>
+						<a asp-controller="Dashboards" asp-action="Emails" class="menu-link">
+							<div data-i18n="Emails">Emails</div>
+						</a>
+					</li>
+
+					<li class='menu-item@(currentPage == "/Dashboards/Sms" ? "active" : currentPage == "/Dashboards/SmsCreate" ? "active":"")'>
 						<a asp-controller="Dashboards" asp-action="Sms" class="menu-link">
 							<div data-i18n="Sms">Sms</div>
 						</a>
