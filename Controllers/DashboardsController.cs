@@ -1186,23 +1186,9 @@ public class DashboardsController : BaseController
         String Passportexpiry = worksheet.Cells[row, 68].Value?.ToString();//BP
         String email = worksheet.Cells[row, 70].Value?.ToString();//BR
 
-          var userChk = new User
+          int off = -1;
+          if (Convert.ToInt32(worksheet.Cells[row, 2].Value?.ToString())!=null || worksheet.Cells[row, 2].Value?.ToString() != "")
           {
-            UserId = customerID,
-            Uname = customerName,
-            UserName = customerName+"-"+customerID,
-            Password = customerName,
-            Gender = customerGender,
-            Cnic = Cnic,
-            Cnicexpiry = Cnicexpiry,
-            Passport = Passport,
-            Passportexpiry = Passportexpiry,
-            Dob = dob,
-            RoleIdFk=2
-          };
-
-          int cus=GetOrCreateUserId(userChk);
-
           var offChk = new User
           {
             UserId = Convert.ToInt32(worksheet.Cells[row, 2].Value?.ToString()),//B
@@ -1212,8 +1198,26 @@ public class DashboardsController : BaseController
             Dob = "N/a",
             RoleIdFk = 5
           };
-          int off=GetOrCreateUserId(offChk);
+          off=GetOrCreateUserId(offChk, userId, userId);
           GetOrCreateNationalityId(nationality,customerID);
+          }
+
+          var userChk = new User
+          {
+            UserId = customerID,
+            Uname = customerName,
+            UserName = customerName + "-" + customerID,
+            Password = customerName,
+            Gender = customerGender,
+            Cnic = Cnic,
+            Cnicexpiry = Cnicexpiry,
+            Passport = Passport,
+            Passportexpiry = Passportexpiry,
+            Dob = dob,
+            RoleIdFk = 2
+          };
+
+          int cus = GetOrCreateUserId(userChk, userId, off);
 
           if (autoCempaign=="on")
           {
@@ -1302,7 +1306,7 @@ public class DashboardsController : BaseController
     return excelDataList;
   }
 
-  public int GetOrCreateUserId(User U)
+  public int GetOrCreateUserId(User U,int loginUser,int officer)
   {
     // Check if the organization exists in the database
     var user = _db.Users
@@ -1317,6 +1321,8 @@ public class DashboardsController : BaseController
     {
       U.UpdatedAt = DateTime.UtcNow;
         U.CreatedAt = DateTime.UtcNow;
+      U.CreatedbyIdFk = loginUser;
+      U.CreatedtoIdFk = officer!=-1?officer:loginUser;
       _db.Users.Add(U);
       _db.SaveChanges();
 

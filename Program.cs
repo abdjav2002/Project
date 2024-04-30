@@ -10,8 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AspnetCoreMvcFullContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("AspnetCoreMvcFullContext") ?? throw new InvalidOperationException("Connection string 'AspnetCoreMvcFullContext' not found.")));
 
+//builder.Services.AddDbContext<DebtsyncContext>(options =>
+//    options.UseNpgsql("Server=localhost;Port=5433;Database=debtsync;Uid=postgres;Pwd=123;"));
 builder.Services.AddDbContext<DebtsyncContext>(options =>
-    options.UseNpgsql("Server=localhost;Port=5433;Database=debtsync;Uid=postgres;Pwd=123;"));
+    options.UseNpgsql("Server=monorail.proxy.rlwy.net;Port=14788;Database=railway;Uid=postgres;Pwd=AAkaonmDsoevodbHWIsOzrTieOKBfczc;"));
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
