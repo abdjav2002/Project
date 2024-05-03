@@ -167,20 +167,24 @@ public class DashboardsController : BaseController
 
 
   [HttpPost]
-  public async Task<IActionResult> EmailCreate(string subject,string body, int[] selectedIds)
+  public async Task<IActionResult> EmailCreate([FromBody] MyEmail formData)
   {
+    //if (subject == null || body == null || selectedIds == null)
+    //{
+    //  return NotFound();
+    //}
 
     var emailobj = new Emailtext
     {
-      Subject = subject,
-      Email = body,
+      Subject = formData.Subject,
+      Email = formData.Body,
       CreatedAt = DateTime.UtcNow
     };
      _db.Add(emailobj);
     await _db.SaveChangesAsync();
 
 
-    foreach (var id in selectedIds)
+    foreach (var id in formData.SelectedIds)
       {
         var obj = new Emailacc
         {
@@ -191,7 +195,6 @@ public class DashboardsController : BaseController
         _db.Add(obj);
         await _db.SaveChangesAsync();
       }
-
       
     return RedirectToAction(nameof(EmailDetail), new { id = emailobj.EmailTextId });
   }
@@ -206,7 +209,7 @@ public class DashboardsController : BaseController
   {
     if (id == null)
     {
-      return NotFound();
+      return RedirectToAction(nameof(Emails));
     }
     var email = await _db.Emailaccs
       .Include(x=>x.EmailtextIdFkNavigation)
@@ -245,21 +248,20 @@ public class DashboardsController : BaseController
 
 
   [HttpPost]
-  [ValidateAntiForgeryToken]
-  public async Task<IActionResult> SmsCreate(Smstext smss, int[] selectedIds)
+  public async Task<IActionResult> SmsCreate([FromBody] MySms formData)
   {
 
     var smsobj = new Smstext
     {
-      Sms = smss.Sms,
-      Subject = smss.Subject,
+      Sms = formData.Body,
+      Subject = formData.Subject,
       CreatedAt = DateTime.UtcNow
     };
     _db.Add(smsobj);
     await _db.SaveChangesAsync();
 
 
-    foreach (var id in selectedIds)
+    foreach (var id in formData.SelectedIds)
     {
       var obj = new Smsacc
       {
@@ -285,7 +287,7 @@ public class DashboardsController : BaseController
   {
     if (id == null)
     {
-      return NotFound();
+      return RedirectToAction(nameof(Sms));
     }
     var email = await _db.Smsaccs
       .Include(x => x.SmsIdFkNavigation)

@@ -11,6 +11,9 @@
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
 	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
 
+	<link rel="stylesheet" href="~/vendor/libs/quill/typography.css" />
+	<link rel="stylesheet" href="~/vendor/libs/quill/katex.css" />
+	<link rel="stylesheet" href="~/vendor/libs/quill/editor.css" />
 	<style>
 		*,
 		*:after,
@@ -45,6 +48,8 @@
 	<script src="~/vendor/libs/moment/moment.js"></script>
 	<script src="~/vendor/libs/flatpickr/flatpickr.js"></script>
 	<script src="~/vendor/libs/select2/select2.js"></script>
+	<script src="~/vendor/libs/quill/katex.js"></script>
+	<script src="~/vendor/libs/quill/quill.js"></script>
 }
 @section PageScripts {
 	@* <script src="~/js/form-layouts.js"></script> *@
@@ -55,6 +60,8 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 	<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
 	<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+	<script src="~/js/forms-editors.js"></script>
+
 
 	<script>
 		$(document).ready(function () {
@@ -92,6 +99,65 @@
 			}
 
 			return true; // Allow form submission
+		}
+	</script>
+
+	<script>
+		function submitForm() {
+			// Get form data
+			var subject = document.getElementById('smsForm').querySelector('[name="Subject"]').value;
+			var body = document.getElementById('snow-editor').innerHTML
+			var users = []; // Assuming you want to fetch the list of users from somewhere
+			$('.row-checkbox:checked').each(function () {
+				users.push($(this).val());
+			});
+			console.log(subject);
+			console.log(body);
+			console.log(users);
+
+			// return false;
+
+
+			// Get all checkboxes
+			var checkboxes = document.querySelectorAll('.row-checkbox');
+
+			// Check if at least one checkbox is checked
+			var isChecked = false;
+			checkboxes.forEach(function (checkbox) {
+				if (checkbox.checked) {
+					isChecked = true;
+				}
+			});
+
+			// If no checkbox is checked, display an alert and prevent form submission
+			if (!isChecked) {
+				alert('Please select at least one user.');
+				return false; // Prevent form submission
+			}
+
+
+
+			var data = { subject: subject, body: body, selectedIds: users };
+			// var data = { subject: subject, body: body, selectedIds: users };
+
+			$.ajax({
+				type: "POST",
+				url: "/Dashboards/SmsCreate",
+				contentType: "application/json",
+				data: JSON.stringify(data),
+				success: function (response) {
+					// alert('Form submitted successfully!');
+					// Handle response if needed
+					window.location.href = '/Dashboards/Sms';
+				},
+				error: function (xhr, status, error) {
+					alert('Error occurred while submitting form! ' + error);
+					console.log("Error occurred while submitting form! " + error);
+					// Handle error if needed
+				}
+			});
+
+			return false; // Prevent default form submission
 		}
 	</script>
 
@@ -136,7 +202,7 @@
 				<h5 class="mb-0">Mark bulk Sms</h5>
 			</div>
 			<div class="card-body">
-				<form id="smsForm" asp-action="SmsCreate" method="post" onsubmit="return validateForm()">
+				<form id="smsForm" asp-action="SmsCreate" method="post" onsubmit="return submitForm()">
 					<div asp-validation-summary="All" class="text-danger"></div>
 
 					<div class="row mb-3">
@@ -147,10 +213,47 @@
 							</div>
 						</div>
 
-						<div class="row mb-3">
+						@* <div class="row mb-3">
 							<label class="col-sm-2 col-form-label" for="emailtext">Sms Text</label>
 							<div class="col-sm-10">
 								<input id="sms-body" type="text" required class="form-control" asp-for="Sms" placeholder="Enter Sms body" />
+							</div>
+						</div> *@
+
+						<div class="col-12">
+							<div class="card mb-4">
+								<h5 class="card-header">Snow Theme</h5>
+								<div class="card-body">
+									<div id="snow-toolbar">
+										<span class="ql-formats">
+											<select class="ql-font"></select>
+											<select class="ql-size"></select>
+										</span>
+										<span class="ql-formats">
+											<button class="ql-bold"></button>
+											<button class="ql-italic"></button>
+											<button class="ql-underline"></button>
+											<button class="ql-strike"></button>
+										</span>
+										<span class="ql-formats">
+											<select class="ql-color"></select>
+											<select class="ql-background"></select>
+										</span>
+										<span class="ql-formats">
+											<button class="ql-script" value="sub"></button>
+											<button class="ql-script" value="super"></button>
+										</span>
+										<span class="ql-formats">
+											<button class="ql-header" value="1"></button>
+											<button class="ql-header" value="2"></button>
+											<button class="ql-blockquote"></button>
+											<button class="ql-code-block"></button>
+										</span>
+									</div>
+									<div id="snow-editor">
+										We're here to help! <b>Have a question or feedback?</b> Reach out to us anytime via email at [Your Email Address] or by phone at [Your Phone Number]. We're ready to assist you!
+									</div>
+								</div>
 							</div>
 						</div>
 

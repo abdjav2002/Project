@@ -159,8 +159,9 @@
 				contentType: "application/json",
 				data: JSON.stringify(data),
 				success: function (response) {
-					alert('Form submitted successfully!');
+					// alert('Form submitted successfully!');
 					// Handle response if needed
+					window.location.href = '/Dashboards/Emails';
 				},
 				error: function (xhr, status, error) {
 					alert('Error occurred while submitting form!');
@@ -175,7 +176,9 @@
 
 	<script>
 		// JavaScript function to handle "Use" button click event
-		function FetchSubAndEmail() {
+		function FetchSubAndEmail(subject, body) {
+			console.log("Subject: " + subject);
+			console.log("Body: " + body);
 			// Clear the input fields
 			document.getElementById('myemail-subject').value = '';
 			document.getElementById('snow-editor').innerHTML = '';
@@ -345,7 +348,7 @@
 									<div id="accordionWithIcon-@(y.EmailTextId)" class="accordion-collapse collapse">
 										<hr />
 										<div class="accordion-body">
-											<button class="btn btn-primary w-100" style="text-align:center;" onclick="FetchSubAndEmail()" data-bs-dismiss="modal"><b>Use</b></button>
+											<button class="btn btn-primary w-100" style="text-align:center;" onclick="FetchSubAndEmail('@y.Subject', '@y.Email')" data-bs-dismiss="modal"><b>Use</b></button>
 											<hr />
 											@Html.Raw(y.Email)
 										</div>
