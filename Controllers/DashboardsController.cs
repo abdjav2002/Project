@@ -343,7 +343,17 @@ public class DashboardsController : BaseController
   {
     var list = await _db.Campaignslists.FirstOrDefaultAsync(a => a.CampaignslistsId == id);
     var z = await _db.Campaignslistusers.Where(a => a.CampaignslistsIdFk == id).ToListAsync();
-    var y = await _db.Accounts.ToListAsync();
+    var y = await _db.Accounts
+      .Include(a => a.CountryIdFkNavigation)
+        .Include(a => a.EmailIdFkNavigation)
+        .Include(a => a.OrganizationIdFkNavigation)
+        .Include(a => a.RegionIdFkNavigation)
+        .Include(a => a.SegmentIdFkNavigation)
+        .Include(a => a.ProductIdFkNavigation)
+        .Include(a => a.CenterIdFkNavigation)
+        .Include(a => a.CustomerIdFkNavigation)
+        .Include(a => a.UserIdFkNavigation)
+      .ToListAsync();
     // Filter accounts using client-side evaluation
     var filteredAccounts = y.Where(a => z.Any(c => c.UserIdFk == a.CustomerIdFk)).ToList();
 
@@ -843,6 +853,21 @@ public class DashboardsController : BaseController
     return View(aCode);
   }
 
+  [HttpPost]
+  public IActionResult ActiveOrInactive(int userId, int newStatus)
+  {
+    var user = _db.Users.Find(userId);
+    if (user == null)
+    {
+      return NotFound(); // User not found
+    }
+
+    user.Status = newStatus; // Update user status
+    _db.SaveChanges(); // Save changes to the database
+
+    return RedirectToAction("List", "Users"); // Redirect to the home page or any other page as needed
+  }
+
 
   public async Task<IActionResult> updateStatus(int? id, int status)
   {
@@ -1171,22 +1196,22 @@ public class DashboardsController : BaseController
 
         for (int row = 2; row <= rowCount; row++)
       {
-        String organization = worksheet.Cells[row, 3].Value?.ToString().ToLower();//C
-          String country = worksheet.Cells[row, 4].Value?.ToString().ToLower();//D
-        String region = worksheet.Cells[row, 5].Value?.ToString().ToLower();//E
-        String center = worksheet.Cells[row, 6].Value?.ToString().ToLower();//F
-        String segment = worksheet.Cells[row, 7].Value?.ToString().ToLower();//G
-        String product = worksheet.Cells[row, 8].Value?.ToString().ToLower();//G
-         int customerID = (int)Convert.ToInt64(worksheet.Cells[row, 9].Value?.ToString());//I
-          String customerName = worksheet.Cells[row, 12].Value?.ToString();//L
-        String customerGender = worksheet.Cells[row, 13].Value?.ToString();//M
-        String nationality = worksheet.Cells[row, 63].Value?.ToString().ToLower();//BK
-          String Cnic = worksheet.Cells[row, 64].Value?.ToString();//BL
-        String Cnicexpiry = worksheet.Cells[row, 65].Value?.ToString();//BM
-        String dob = worksheet.Cells[row, 66].Value?.ToString();//BN
-        String Passport = worksheet.Cells[row, 67].Value?.ToString();//BO
-        String Passportexpiry = worksheet.Cells[row, 68].Value?.ToString();//BP
-        String email = worksheet.Cells[row, 70].Value?.ToString();//BR
+          String organization = worksheet.Cells[row, 3].Value?.ToString()?.ToLower() ?? ""; // C
+          String country = worksheet.Cells[row, 4].Value?.ToString()?.ToLower() ?? ""; // D
+          String region = worksheet.Cells[row, 5].Value?.ToString()?.ToLower() ?? ""; // E
+          String center = worksheet.Cells[row, 6].Value?.ToString()?.ToLower() ?? ""; // F
+          String segment = worksheet.Cells[row, 7].Value?.ToString()?.ToLower() ?? ""; // G
+          String product = worksheet.Cells[row, 8].Value?.ToString()?.ToLower() ?? ""; // H
+          int customerID = Convert.ToInt32(worksheet.Cells[row, 9].Value?.ToString() ?? "0"); // I
+          String customerName = worksheet.Cells[row, 12].Value?.ToString() ?? ""; // L
+          String customerGender = worksheet.Cells[row, 13].Value?.ToString() ?? ""; // M
+          String nationality = worksheet.Cells[row, 63].Value?.ToString()?.ToLower() ?? ""; // BK
+          String Cnic = worksheet.Cells[row, 64].Value?.ToString() ?? ""; // BL
+          String Cnicexpiry = worksheet.Cells[row, 65].Value?.ToString() ?? ""; // BM
+          String dob = worksheet.Cells[row, 66].Value?.ToString() ?? ""; // BN
+          String Passport = worksheet.Cells[row, 67].Value?.ToString() ?? ""; // BO
+          String Passportexpiry = worksheet.Cells[row, 68].Value?.ToString() ?? ""; // BP
+          String email = worksheet.Cells[row, 70].Value?.ToString() ?? ""; // BR
 
           int off = -1;
           if (Convert.ToInt32(worksheet.Cells[row, 2].Value?.ToString())!=null || worksheet.Cells[row, 2].Value?.ToString() != "")
@@ -1231,65 +1256,65 @@ public class DashboardsController : BaseController
           excelDataList.Add(new Account
           {
             CustomerIdFk = cus,
-            AllocationDate = worksheet.Cells[row, 1].Value?.ToString(),//A
+            AllocationDate = worksheet.Cells[row, 1].Value?.ToString() ?? "", // A
             Center = center,
             UserIdFk = userId,
-            Product = product,//H
-            Customeracnumber = worksheet.Cells[row, 10].Value?.ToString(),//J
-            ContractDate = worksheet.Cells[row, 11].Value?.ToString(),//K
-            CmMobile = worksheet.Cells[row, 14].Value?.ToString(),//N
-            CmHome = worksheet.Cells[row, 15].Value?.ToString(),//O
-            CmWork = worksheet.Cells[row, 16].Value?.ToString(),//P
-            Faxno = worksheet.Cells[row, 17].Value?.ToString(),//Q
-            CmRef1 = worksheet.Cells[row, 18].Value?.ToString(),//R
-            CmRef2 = worksheet.Cells[row, 19].Value?.ToString(),//S
-            ContactPersonOrDeptt = worksheet.Cells[row, 20].Value?.ToString(),//T
-            CmHomeaddress = worksheet.Cells[row, 21].Value?.ToString(),//U
-            CmWorkaddress = worksheet.Cells[row, 22].Value?.ToString(),//V
-            Outstandingbalance = Convert.ToInt32(worksheet.Cells[row, 23].Value?.ToString()),//W
-            Contractamount = Convert.ToInt32(worksheet.Cells[row, 24].Value?.ToString()),//X
-            Overdueamount = Convert.ToInt32(worksheet.Cells[row, 25].Value?.ToString()),//Y
-            Minimumpayment = Convert.ToInt32(worksheet.Cells[row, 26].Value?.ToString()),//Z
-            Openingbalance = Convert.ToInt32(worksheet.Cells[row, 27].Value?.ToString()),//AA
-            Principleamount = Convert.ToInt32(worksheet.Cells[row, 28].Value?.ToString()),//AB
-            Legalstatus = worksheet.Cells[row, 29].Value?.ToString(),//AC
-            Cycledate = worksheet.Cells[row, 30].Value?.ToString(),//AD
-            Bkt1 = Convert.ToInt32(worksheet.Cells[row, 31].Value?.ToString()),//AE
-            Bkt2 = Convert.ToInt32(worksheet.Cells[row, 32].Value?.ToString()),//AF
-            Bkt3 = Convert.ToInt32(worksheet.Cells[row, 33].Value?.ToString()),//AG
-            Bkt4 = Convert.ToInt32(worksheet.Cells[row, 34].Value?.ToString()),//AH
-            Bkt5 = Convert.ToInt32(worksheet.Cells[row, 35].Value?.ToString()),//AI
-            Bkt6 = Convert.ToInt32(worksheet.Cells[row, 36].Value?.ToString()),//AJ
-            Chargeoffamount = Convert.ToInt32(worksheet.Cells[row, 37].Value?.ToString()),//AK
-            Chargeoffdate = worksheet.Cells[row, 38].Value?.ToString(),//AL
-            Writtenoffamount = Convert.ToInt32(worksheet.Cells[row, 39].Value?.ToString()),//AM
-            Writtenoffdate = worksheet.Cells[row, 40].Value?.ToString(),//AN
-            Lastpayment = Convert.ToInt32(worksheet.Cells[row, 41].Value?.ToString()),//AO
-            Lastpaymentdate = worksheet.Cells[row, 42].Value?.ToString(),//AP
-            Secondlastpayment = Convert.ToInt32(worksheet.Cells[row, 43].Value?.ToString()),//AQ
-            Secondlastpaymentdate = worksheet.Cells[row, 44].Value?.ToString(),//AR
-            Thirdlastpayment = Convert.ToInt32(worksheet.Cells[row, 45].Value?.ToString()),//AS
-            ThirdlastpaymentDate = worksheet.Cells[row, 46].Value?.ToString(),//AT
-            Fourthlastpayment = Convert.ToInt32(worksheet.Cells[row, 47].Value?.ToString()),//AU
-            FourthlastpaymentDate = worksheet.Cells[row, 48].Value?.ToString(),//AV
-            Fifthlastpayment = Convert.ToInt32(worksheet.Cells[row, 49].Value?.ToString()),//AW
-            FifthlastpaymentDate = worksheet.Cells[row, 50].Value?.ToString(),//AX
-            Sixthlastpayment = Convert.ToInt32(worksheet.Cells[row, 51].Value?.ToString()),//AY
-            SixthlastpaymentDate = worksheet.Cells[row, 52].Value?.ToString(),//AZ
-            TotalClaimedAmount = Convert.ToInt32(worksheet.Cells[row, 53].Value?.ToString()),//BA
-            TotalPaidAmount = Convert.ToInt32(worksheet.Cells[row, 54].Value?.ToString()),//BB
-            UnpaidInvoice = Convert.ToInt32(worksheet.Cells[row, 55].Value?.ToString()),//BC
-            Dpd = Convert.ToInt32(worksheet.Cells[row, 56].Value?.ToString()),//BD
-            Dpd06 = Convert.ToInt32(worksheet.Cells[row, 57].Value?.ToString()),//BE
-            Dpd712 = Convert.ToInt32(worksheet.Cells[row, 58].Value?.ToString()),//BF
-            Dpd1318 = Convert.ToInt32(worksheet.Cells[row, 59].Value?.ToString()),//BG
-            Dpd1924 = Convert.ToInt32(worksheet.Cells[row, 60].Value?.ToString()),//BH
-            Dpd2536 = Convert.ToInt32(worksheet.Cells[row, 61].Value?.ToString()),//BI
-            Dpd37plus = Convert.ToInt32(worksheet.Cells[row, 62].Value?.ToString()),//BJ
-            Poboxno = worksheet.Cells[row, 69].Value?.ToString(),//BQ
-            Specialinfo = worksheet.Cells[row, 71].Value?.ToString(),//BS
-            Status = worksheet.Cells[row, 72].Value?.ToString(),//BT
-            Remarks = worksheet.Cells[row, 73].Value?.ToString(),//BU
+            Product = product, // H
+            Customeracnumber = worksheet.Cells[row, 10].Value?.ToString() ?? "", // J
+            ContractDate = worksheet.Cells[row, 11].Value?.ToString() ?? "", // K
+            CmMobile = worksheet.Cells[row, 14].Value?.ToString() ?? "", // N
+            CmHome = worksheet.Cells[row, 15].Value?.ToString() ?? "", // O
+            CmWork = worksheet.Cells[row, 16].Value?.ToString() ?? "", // P
+            Faxno = worksheet.Cells[row, 17].Value?.ToString() ?? "", // Q
+            CmRef1 = worksheet.Cells[row, 18].Value?.ToString() ?? "", // R
+            CmRef2 = worksheet.Cells[row, 19].Value?.ToString() ?? "", // S
+            ContactPersonOrDeptt = worksheet.Cells[row, 20].Value?.ToString() ?? "", // T
+            CmHomeaddress = worksheet.Cells[row, 21].Value?.ToString() ?? "", // U
+            CmWorkaddress = worksheet.Cells[row, 22].Value?.ToString() ?? "", // V
+            Outstandingbalance = Convert.ToInt32(worksheet.Cells[row, 23].Value?.ToString() ?? "0"), // W
+            Contractamount = Convert.ToInt32(worksheet.Cells[row, 24].Value?.ToString() ?? "0"), // X
+            Overdueamount = Convert.ToInt32(worksheet.Cells[row, 25].Value?.ToString() ?? "0"), // Y
+            Minimumpayment = Convert.ToInt32(worksheet.Cells[row, 26].Value?.ToString() ?? "0"), // Z
+            Openingbalance = Convert.ToInt32(worksheet.Cells[row, 27].Value?.ToString() ?? "0"), // AA
+            Principleamount = Convert.ToInt32(worksheet.Cells[row, 28].Value?.ToString() ?? "0"), // AB
+            Legalstatus = worksheet.Cells[row, 29].Value?.ToString() ?? "", // AC
+            Cycledate = worksheet.Cells[row, 30].Value?.ToString() ?? "", // AD
+            Bkt1 = Convert.ToInt32(worksheet.Cells[row, 31].Value?.ToString() ?? "0"), // AE
+            Bkt2 = Convert.ToInt32(worksheet.Cells[row, 32].Value?.ToString() ?? "0"), // AF
+            Bkt3 = Convert.ToInt32(worksheet.Cells[row, 33].Value?.ToString() ?? "0"), // AG
+            Bkt4 = Convert.ToInt32(worksheet.Cells[row, 34].Value?.ToString() ?? "0"), // AH
+            Bkt5 = Convert.ToInt32(worksheet.Cells[row, 35].Value?.ToString() ?? "0"), // AI
+            Bkt6 = Convert.ToInt32(worksheet.Cells[row, 36].Value?.ToString() ?? "0"), // AJ
+            Chargeoffamount = Convert.ToInt32(worksheet.Cells[row, 37].Value?.ToString() ?? "0"), // AK
+            Chargeoffdate = worksheet.Cells[row, 38].Value?.ToString() ?? "", // AL
+            Writtenoffamount = Convert.ToInt32(worksheet.Cells[row, 39].Value?.ToString() ?? "0"), // AM
+            Writtenoffdate = worksheet.Cells[row, 40].Value?.ToString() ?? "", // AN
+            Lastpayment = Convert.ToInt32(worksheet.Cells[row, 41].Value?.ToString() ?? "0"), // AO
+            Lastpaymentdate = worksheet.Cells[row, 42].Value?.ToString() ?? "", // AP
+            Secondlastpayment = Convert.ToInt32(worksheet.Cells[row, 43].Value?.ToString() ?? "0"), // AQ
+            Secondlastpaymentdate = worksheet.Cells[row, 44].Value?.ToString() ?? "", // AR
+            Thirdlastpayment = Convert.ToInt32(worksheet.Cells[row, 45].Value?.ToString() ?? "0"), // AS
+            ThirdlastpaymentDate = worksheet.Cells[row, 46].Value?.ToString() ?? "", // AT
+            Fourthlastpayment = Convert.ToInt32(worksheet.Cells[row, 47].Value?.ToString() ?? "0"), // AU
+            FourthlastpaymentDate = worksheet.Cells[row, 48].Value?.ToString() ?? "", // AV
+            Fifthlastpayment = Convert.ToInt32(worksheet.Cells[row, 49].Value?.ToString() ?? "0"), // AW
+            FifthlastpaymentDate = worksheet.Cells[row, 50].Value?.ToString() ?? "", // AX
+            Sixthlastpayment = Convert.ToInt32(worksheet.Cells[row, 51].Value?.ToString() ?? "0"), // AY
+            SixthlastpaymentDate = worksheet.Cells[row, 52].Value?.ToString() ?? "", // AZ
+            TotalClaimedAmount = Convert.ToInt32(worksheet.Cells[row, 53].Value?.ToString() ?? "0"), // BA
+            TotalPaidAmount = Convert.ToInt32(worksheet.Cells[row, 54].Value?.ToString() ?? "0"), // BB
+            UnpaidInvoice = Convert.ToInt32(worksheet.Cells[row, 55].Value?.ToString() ?? "0"), // BC
+            Dpd = Convert.ToInt32(worksheet.Cells[row, 56].Value?.ToString() ?? "0"), // BD
+            Dpd06 = Convert.ToInt32(worksheet.Cells[row, 57].Value?.ToString() ?? "0"), // BE
+            Dpd712 = Convert.ToInt32(worksheet.Cells[row, 58].Value?.ToString() ?? "0"), // BF
+            Dpd1318 = Convert.ToInt32(worksheet.Cells[row, 59].Value?.ToString() ?? "0"), // BG
+            Dpd1924 = Convert.ToInt32(worksheet.Cells[row, 60].Value?.ToString() ?? "0"), // BH
+            Dpd2536 = Convert.ToInt32(worksheet.Cells[row, 61].Value?.ToString() ?? "0"), // BI
+            Dpd37plus = Convert.ToInt32(worksheet.Cells[row, 62].Value?.ToString() ?? "0"), // BJ
+            Poboxno = worksheet.Cells[row, 69].Value?.ToString() ?? "", // BQ
+            Specialinfo = worksheet.Cells[row, 71].Value?.ToString() ?? "", // BS
+            Status = worksheet.Cells[row, 72].Value?.ToString() ?? "", // BT
+            Remarks = worksheet.Cells[row, 73].Value?.ToString() ?? "", // BU
             OrganizationIdFk = Convert.ToInt32(GetOrCreateOrganizationId(organization)),
             CountryIdFk = Convert.ToInt32(GetOrCreateCountryId(country)),
             RegionIdFk = Convert.ToInt32(GetOrCreateRegionId(region)),

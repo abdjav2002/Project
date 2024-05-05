@@ -13,6 +13,12 @@
 	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.0/css/buttons.dataTables.css">
 	<link rel="stylesheet" href="https://cdn.datatables.net/select/2.0.0/css/select.dataTables.css">
 	<link rel="stylesheet" href="~/vendor/libs/animate-css/animate.css">
+
+	<style>
+		#example_wrapper {
+			margin: 1em;
+		}
+	</style>
 }
 
 @section VendorScripts {
@@ -43,17 +49,38 @@
 	<script src="~/js/ui-modals.js"></script>
 
 	<script>
-		new DataTable('#example', {
-			layout: {
-				topStart: {
-					buttons: [
-						'copy',
-						'csv',
-						'excel',
-					]
-				}
-			},
-			select: true
+		$(document).ready(function () {
+			new DataTable('#example', {
+				layout: {
+					topStart: {
+						buttons: [
+							{
+								extend: 'copy',
+								exportOptions: {
+									columns: [0, 1, 2, 3] // Exclude the last column
+								}
+							},
+							{
+								extend: 'csv',
+								exportOptions: {
+									columns: [0, 1, 2, 3] // Exclude the last column
+								}
+							},
+							{
+								extend: 'excelHtml5',
+								exportOptions: {
+									columns: [0, 1, 2, 3] // Exclude the last column
+								}
+							}
+						]
+					}
+				},
+				scrollX: true, // Enable horizontal scrolling
+				select: true,
+				columnDefs: [
+					{ targets: -1, orderable: false } // Disable ordering for the last column
+				]
+			});
 		});
 	</script>
 
@@ -64,8 +91,8 @@
 	<div class="row">
 		<div class="col-9">
 		</div>
-		<div class="col-3">
-			<button class="dt-button add-new btn btn-primary waves-effect waves-light" tabindex="0" aria-controls="DataTables_Table_0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><span><i class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span class="d-none d-sm-inline-block">Add New User</span></span></button>
+		<div class="col-3 mt-2">
+			<button class="dt-button add-new btn btn-primary waves-effect waves-light" style="width: 97%;" tabindex="0" aria-controls="DataTables_Table_0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><span><i class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span class="d-none d-sm-inline-block">Add New User</span></span></button>
 		</div>
 	</div>
 	@if (Model.Count() > 0)
@@ -77,7 +104,7 @@
 					<th>Username</th>
 					<th>Dob</th>
 					<th>Gender</th>
-					<th></th>
+					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -94,7 +121,7 @@
 							<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTop-@user.UserId">
 								See More
 							</button>
-							<a asp-action="Restore" asp-route-id="@user.UserId">Restore</a>
+							<a class="btn btn-success" asp-action="Restore" asp-route-id="@user.UserId">Restore</a>
 						</td>
 					</tr>
 
@@ -215,7 +242,7 @@
 					<th>Username</th>
 					<th>Dob</th>
 					<th>Gender</th>
-					<th></th>
+					<th>Actions</th>
 				</tr>
 			</tfoot>
 		</table>

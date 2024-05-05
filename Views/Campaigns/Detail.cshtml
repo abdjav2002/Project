@@ -5,10 +5,11 @@
 }
 @* ************** Content ************** *@
 
-<h4 class="py-3 mb-4"><span class="text-muted fw-light">Campaigns /</span> Total-@Model.Count
+<h4 class="py-3 mb-4"><span class="text-muted fw-light">Campaigns /</span> @Model.Count
 	<a asp-controller="Dashboards" asp-action="myExcel" style="float:right"><button class="dt-button add-new btn btn-primary waves-effect waves-light">Upload Excel</button></a>
+	<a asp-controller="Campaigns" asp-action="CampaignsCreate" style="float:right;margin-right: 0.5em;"><button class="dt-button add-new btn btn-primary waves-effect waves-light">Add Campaigns</button></a>
 	</h4>
-<a asp-controller="Campaigns" asp-action="CampaignsCreate"><h6>Add Campaigns</h6></a>
+@* <a asp-controller="Campaigns" asp-action="CampaignsCreate"><h6><b><u>Add Campaigns</u></b></h6></a> *@
 <!-- Advance Styling Options -->
 
 <div class="row mb-3">
@@ -19,12 +20,13 @@
 		
 	<!-- Accordion with Icon -->
 	<div class="col-md-6 mb-4 mb-md-2">
-				<h5>@x.CampaignName <a asp-controller="Campaigns" asp-action="CampaignsListsCreate" asp-route-id="@x.CampaignId"><p>Add List</p></a></h5>
+				<h5>@x.CampaignName <a asp-controller="Campaigns" asp-action="CampaignsListsCreate" asp-route-id="@x.CampaignId"><span>Add List</span></a></h5>
 		<small class="text-light fw-medium">@x.CampaignDesc</small>
+
 			@if (ViewBag.list != null && ViewBag.list.Count > 0)
 			{
-				@foreach (var y in ViewBag.list)
-				{
+					@foreach (var y in ViewBag.list as List<Campaignslist>)
+					{
 				if (y.CampaignIdFk == x.CampaignId)
 				{
 					var count = 0;
@@ -36,6 +38,14 @@
 											@y.CampaignslistsName (Officer: @y.UserIdFkNavigation.UserName (@y.UserIdFkNavigation.UserId)  Target: @y.Target)
 								</button>
 							</h2>
+									<div style="padding-left: 20px;">
+										@* <a asp-action="OfficerListsDetail" asp-route-id="@y.CampaignslistsId">Start Queue</a>
+										<span> || </span> *@
+
+										<a asp-action="summary" asp-controller="Dashboards" asp-route-id="@y.CampaignslistsId">
+											View Performance
+										</a>
+									</div>
 
 							<div id="accordionWithIcon-@(x.CampaignId)-@(y.CampaignslistsId)" class="accordion-collapse collapse">
 								<div class="accordion-body">
@@ -44,13 +54,13 @@
 												<a asp-controller="Campaigns" asp-action="AssignedEdit" asp-route-id="@y.CampaignslistsId"><p>Remove/DNC</p></a>
 												<a asp-controller="Dashboards" asp-action="Target" asp-route-id="@y.CampaignslistsId"><p>Set Target</p></a>
 											</div>
-									@foreach (var z in ViewBag.listUsers)
+									@foreach (var z in ViewBag.listUsers as List<Campaignslistuser>)
 									{
 						if (y.CampaignslistsId == z.CampaignslistsIdFk)
 										{
 											count++;
 													<div style="display: flex;justify-content: space-between;cursor:pointer;" data-bs-toggle="modal" data-bs-target="#modalTop-@x.CampaignId-@y.CampaignslistsId-@z.UserIdFkNavigation.UserId">
-														<div>@z.UserIdFkNavigation.UserName (@z.UserIdFkNavigation.UserId)</div>
+														<div>@z.UserIdFkNavigation.UserName (@z.UserIdFkNavigation.Dob)</div>
 														<div>@z.Status</div>
 													</div>
 													<!-- Modal -->

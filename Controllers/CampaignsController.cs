@@ -156,12 +156,22 @@ namespace AspnetCoreMvcFull.Controllers
     {
       if (ModelState.IsValid)
       {
-        campaign.Status = 1;
-        campaign.UpdatedAt = DateTime.UtcNow;
-        campaign.CreatedAt = DateTime.UtcNow;
-        _db.Add(campaign);
-        await _db.SaveChangesAsync();
-        return RedirectToAction(nameof(Detail));
+        try
+        {
+          campaign.Status = 1;
+          campaign.UpdatedAt = DateTime.UtcNow;
+          campaign.CreatedAt = DateTime.UtcNow;
+          _db.Add(campaign);
+          await _db.SaveChangesAsync();
+          return RedirectToAction(nameof(CampaignsListsCreate), new { id = campaign.CampaignId });
+        }
+        catch (Exception ex)
+        {
+          // Log the exception or handle it as necessary
+          // Redirect to the "Detail" page
+          return RedirectToAction(nameof(Detail));
+        }
+
       }
       return View(campaign);
     }

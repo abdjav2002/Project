@@ -26,9 +26,9 @@ public class UsersController : BaseController
 
 
   public IActionResult List() {
-    var t = _db.Users.Count();
-    var a = _db.Users.Where(a=>a.Status==1).Count();
-    var na = _db.Users.Where(a=>a.Status==0).Count();
+    var t = _db.Users.Where(a => a.RoleIdFk != 2).Count();
+    var a = _db.Users.Where(a=>a.Status==1 && a.RoleIdFk != 2).Count();
+    var na = _db.Users.Where(a=>a.Status==0 && a.RoleIdFk != 2).Count();
     var x = _db.Roles.Where(a => a.RoleId != 2).ToList();
     ViewBag.TotalUsers = t;
     ViewBag.ActiveUsers = a;

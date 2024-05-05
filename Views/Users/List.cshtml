@@ -13,6 +13,12 @@
 	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.0/css/buttons.dataTables.css">
 	<link rel="stylesheet" href="https://cdn.datatables.net/select/2.0.0/css/select.dataTables.css">
 	<link rel="stylesheet" href="~/vendor/libs/animate-css/animate.css">
+
+	<style>
+		#example_wrapper{
+			margin:1em;
+		}
+	</style>
 }
 
 @section VendorScripts {
@@ -43,21 +49,43 @@
 	<script src="~/js/ui-modals.js"></script>
 
 	<script>
-		new DataTable('#example', {
-			layout: {
-				topStart: {
-					buttons: [
-						'copy',
-						'csv',
-						'excel',
-					]
-				}
-			},
-			select: true
+		$(document).ready(function () {
+			new DataTable('#example', {
+				layout: {
+					topStart: {
+						buttons: [
+							{
+								extend: 'copy',
+								exportOptions: {
+									columns: [0, 1, 2, 3, 4, 5] // Exclude the last column
+								}
+							},
+							{
+								extend: 'csv',
+								exportOptions: {
+									columns: [0, 1, 2, 3, 4, 5] // Exclude the last column
+								}
+							},
+							{
+								extend: 'excelHtml5',
+								exportOptions: {
+									columns: [0, 1, 2, 3, 4, 5] // Exclude the last column
+								}
+							}
+						]
+					}
+				},
+				scrollX: true, // Enable horizontal scrolling
+				select: true,
+				columnDefs: [
+					{ targets: -1, orderable: false } // Disable ordering for the last column
+				]
+			});
 		});
 	</script>
 
-	
+
+
 }
 
 @* ************** Content ************** *@
@@ -147,8 +175,8 @@
 	<div class="row">
 		<div class="col-9">
 		</div>
-		<div class="col-3">
-			<button class="dt-button add-new btn btn-primary waves-effect waves-light" tabindex="0" aria-controls="DataTables_Table_0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><span><i class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span class="d-none d-sm-inline-block">Add New User</span></span></button>
+		<div class="col-3 mt-2">
+			<button class="dt-button add-new btn btn-primary waves-effect waves-light" style="width: 97%;" tabindex="0" aria-controls="DataTables_Table_0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><span><i class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span class="d-none d-sm-inline-block">Add New User</span></span></button>
 		</div>
 	</div>
 	@if (ViewBag.UserDetail != null)
@@ -162,7 +190,7 @@
 					<th>Dob</th>
 					<th>Gender</th>
 					<th>Status</th>
-					<th></th>
+					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -176,12 +204,19 @@
 						<td>@user.Dob</td>
 						<td>@user.Gender</td>
 						<td>@status</td>
-						<td>
+						<td style="display:flex;">
 							@* <a asp-action="changeStatusUser" asp-route-id="@user.UserId"><button>Chnage</button></a> *@
 							<!-- Button trigger modal -->
-							<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTop-@user.UserId">
+							<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTop-@user.UserId" style="margin-right: 0.5em;">
 								See More
 							</button>
+							<form asp-controller="Dashboards" asp-action="ActiveOrInactive" method="post">
+								<input type="hidden" value="@user.UserId" name="userId" />
+								<input type="hidden" value="@(user.Status == 1 ? 0 : 1)" name="newStatus" />
+								<button type="submit" class="btn @(user.Status == 1 ? "btn-danger" : "btn-success")">
+									@(user.Status == 1 ? "In-Active" : "Active")
+								</button>
+							</form>
 						</td>
 					</tr>
 
@@ -304,7 +339,7 @@
 				<th>Dob</th>
 				<th>Gender</th>
 				<th>Status</th>
-				<th></th>
+					<th>Actions</th>
 			</tr>
 		</tfoot>
 	</table>
